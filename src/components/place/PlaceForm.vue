@@ -379,6 +379,12 @@ defineExpose({ form })
 
 .section {
   padding: var(--spacing-lg);
+  background: var(--color-bg-white);
+  border-radius: var(--radius-md);
+}
+
+.section + .section {
+  margin-top: var(--spacing-sm);
 }
 
 .section-label {
