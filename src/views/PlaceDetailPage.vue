@@ -110,7 +110,7 @@ const goEditReview = (reviewId: number) => {
 
 <template>
   <div class="page-wrapper">
-    <van-nav-bar title="店铺详情" left-text="返回" left-arrow @click-left="goBack" />
+    <van-nav-bar title="店铺详情" left-arrow @click-left="goBack" />
 
     <van-loading v-if="loading" class="loading-center" />
 
@@ -273,7 +273,11 @@ const goEditReview = (reviewId: number) => {
 }
 
 .page-wrapper :deep(.van-nav-bar) {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   background: var(--color-bg-white);
+  border-bottom: var(--border-thick);
 }
 
 .loading-center {
@@ -511,7 +515,7 @@ const goEditReview = (reviewId: number) => {
   gap: var(--spacing-md);
   padding: var(--spacing-md) var(--spacing-lg);
   background: var(--color-bg-white);
-  border-top: 1px solid var(--color-border);
+  border-top: var(--border-thick);
   z-index: 50;
 }
 

@@ -96,6 +96,7 @@ const onPickLocation = () => {
   position: sticky;
   top: 0;
   z-index: 10;
+  border-bottom: var(--border-thick);
 }
 
 .page-content {
