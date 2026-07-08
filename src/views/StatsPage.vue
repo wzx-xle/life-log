@@ -62,7 +62,7 @@ function goToPlace(placeId?: number) {
 }
 
 function goToMap() {
-  router.push({ name: 'map' })
+  router.push({ name: 'reviews' })
 }
 
 function getCategoryLabel(cat: string): string {

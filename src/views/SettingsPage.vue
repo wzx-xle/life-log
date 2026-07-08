@@ -7,12 +7,8 @@ const { createPassword, changePassword, resetPassword, isPasswordSet } = useLock
 
 const pwdEnabled = ref(localStorage.getItem('pwd_enabled') === 'true')
 const autoLockMinutes = ref(Number(localStorage.getItem('auto_lock_minutes') || '5'))
-const defaultMode = ref(localStorage.getItem('default_record_mode') || 'quick')
-const mapZoom = ref(Number(localStorage.getItem('map_zoom_level') || '12'))
 
 const showAutoLockPicker = ref(false)
-const showModePicker = ref(false)
-const showZoomPicker = ref(false)
 const showCreatePwdDialog = ref(false)
 const showChangePwdDialog = ref(false)
 
@@ -29,24 +25,9 @@ const autoLockOptions = [
   { text: '15分钟', value: 15 },
 ]
 
-const modeOptions = [
-  { text: '快速', value: 'quick' },
-  { text: '详细', value: 'full' },
-]
-
-const zoomOptions = Array.from({ length: 12 }, (_, i) => ({
-  text: `${i + 9}`,
-  value: i + 9,
-}))
-
 const autoLockText = computed(() => {
   const opt = autoLockOptions.find((o) => o.value === autoLockMinutes.value)
   return opt?.text || '5分钟'
-})
-
-const modeText = computed(() => {
-  const opt = modeOptions.find((o) => o.value === defaultMode.value)
-  return opt?.text || '快速'
 })
 
 async function onPwdToggle(val: boolean) {
@@ -126,20 +107,6 @@ function onAutoLockConfirm({ selectedOptions }: any) {
   localStorage.setItem('auto_lock_minutes', String(val))
   showAutoLockPicker.value = false
 }
-
-function onModeConfirm({ selectedOptions }: any) {
-  const val = selectedOptions[0]?.value
-  defaultMode.value = val
-  localStorage.setItem('default_record_mode', val)
-  showModePicker.value = false
-}
-
-function onZoomConfirm({ selectedOptions }: any) {
-  const val = selectedOptions[0]?.value
-  mapZoom.value = val
-  localStorage.setItem('map_zoom_level', String(val))
-  showZoomPicker.value = false
-}
 </script>
 
 <template>
@@ -178,22 +145,6 @@ function onZoomConfirm({ selectedOptions }: any) {
       />
     </van-cell-group>
 
-    <div class="section-label">偏好设置</div>
-    <van-cell-group inset>
-      <van-cell
-        title="默认记录模式"
-        :value="modeText"
-        is-link
-        @click="showModePicker = true"
-      />
-      <van-cell
-        title="地图缩放级别"
-        :value="`${mapZoom}`"
-        is-link
-        @click="showZoomPicker = true"
-      />
-    </van-cell-group>
-
     <div class="section-label">数据管理</div>
     <van-cell-group inset>
       <van-cell title="导出数据" is-link @click="$emit('export')" />
@@ -213,24 +164,6 @@ function onZoomConfirm({ selectedOptions }: any) {
         title="选择自动锁定时间"
         @confirm="onAutoLockConfirm"
         @cancel="showAutoLockPicker = false"
-      />
-    </van-popup>
-
-    <van-popup v-model:show="showModePicker" position="bottom" round>
-      <van-picker
-        :columns="modeOptions"
-        title="选择记录模式"
-        @confirm="onModeConfirm"
-        @cancel="showModePicker = false"
-      />
-    </van-popup>
-
-    <van-popup v-model:show="showZoomPicker" position="bottom" round>
-      <van-picker
-        :columns="zoomOptions"
-        title="选择地图缩放级别"
-        @confirm="onZoomConfirm"
-        @cancel="showZoomPicker = false"
       />
     </van-popup>
 

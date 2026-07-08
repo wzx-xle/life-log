@@ -307,7 +307,7 @@ watch(
 
 .locate-btn {
   position: absolute;
-  bottom: 20px;
+  bottom: 70px;
   left: 12px;
   width: 40px;
   height: 40px;

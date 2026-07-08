@@ -52,14 +52,14 @@ const phoneDisplay = computed(() => place.value?.phone
 const fetchData = async () => {
   const id = placeId.value
   if (!id) {
-    router.replace({ name: 'map' })
+    router.replace({ name: 'reviews' })
     return
   }
   loading.value = true
   const p = await getPlaceById(id)
   if (!p) {
     showToast('店铺不存在')
-    router.replace({ name: 'map' })
+    router.replace({ name: 'reviews' })
     return
   }
   place.value = p
@@ -81,7 +81,7 @@ const goBack = () => {
   if (window.history.length > 1) {
     router.back()
   } else {
-    router.push({ name: 'map' })
+    router.push({ name: 'reviews' })
   }
 }
 

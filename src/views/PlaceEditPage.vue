@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { Place } from '@/types'
 import { useDatabase } from '@/composables/useDatabase'
 import { usePlaceStore } from '@/stores/usePlaceStore'
+import { mapPickResult } from '@/composables/mapPickState'
 import PlaceForm from '@/components/place/PlaceForm.vue'
 import type { PlaceFormData } from '@/components/place/PlaceForm.vue'
 import { showToast, showConfirmDialog } from 'vant'
@@ -20,38 +21,33 @@ const placeFormRef = ref<InstanceType<typeof PlaceForm>>()
 const loadPlace = async () => {
   const id = Number(route.params.id)
   if (!id) {
-    router.replace({ name: 'map' })
+    router.replace({ name: 'reviews' })
     return
   }
   const p = await getPlaceById(id)
   if (!p) {
     showToast('店铺不存在')
-    router.replace({ name: 'map' })
+    router.replace({ name: 'reviews' })
     return
   }
   place.value = p
   loading.value = false
 }
 
-const applyMapPickResult = async () => {
-  const raw = sessionStorage.getItem('mapPickResult')
-  if (!raw) return
-  sessionStorage.removeItem('mapPickResult')
-  try {
-    const { lat, lng, address } = JSON.parse(raw)
-    if (lat && lng && placeFormRef.value) {
-      await nextTick()
-      const form = placeFormRef.value.form
-      form.lat = lat
-      form.lng = lng
-      form.address = address || ''
-    }
-  } catch { /* ignore */ }
+const applyPickResult = async (val: { lat: number; lng: number; address: string } | null) => {
+  if (!val || !placeFormRef.value) return
+  await nextTick()
+  const form = placeFormRef.value.form
+  form.lat = val.lat
+  form.lng = val.lng
+  form.address = val.address || ''
+  mapPickResult.value = null
 }
+
+watch(mapPickResult, applyPickResult)
 
 onMounted(async () => {
   await loadPlace()
-  setTimeout(applyMapPickResult, 100)
 })
 
 const onSubmit = async (data: PlaceFormData) => {
@@ -97,7 +93,7 @@ const handleDelete = async () => {
     await deletePlace(place.value.id)
     store.removePlace(place.value.id)
     showToast('已删除')
-    router.push({ name: 'map' })
+    router.push({ name: 'reviews' })
   } catch {
     // cancelled
   }

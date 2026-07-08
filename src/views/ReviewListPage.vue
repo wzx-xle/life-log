@@ -108,7 +108,7 @@ const handleReviewDeleted = (id: number) => {
 }
 
 const goToMap = () => {
-  router.push({ name: 'map' })
+  router.push({ name: 'reviews' })
 }
 
 onMounted(() => {

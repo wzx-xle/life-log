@@ -5,20 +5,21 @@ const route = useRoute()
 const router = useRouter()
 
 const tabs = [
-  { name: 'map', label: '地图', icon: 'location-o' },
   { name: 'reviews', label: '记录', icon: 'notes-o' },
-  { name: 'add', label: '＋添加', icon: 'plus' },
+  { name: 'places', label: '店铺', icon: 'shop-o' },
+  { name: 'add', label: '添加', icon: 'plus' },
   { name: 'stats', label: '统计', icon: 'chart-trending-o' },
   { name: 'settings', label: '设置', icon: 'setting-o' },
 ]
 
 const active = (): string => {
   const name = String(route.name || '')
-  if (name === 'map' || name.startsWith('places')) return 'map'
-  if (name === 'reviews' || name.startsWith('reviews')) return 'reviews'
+  if (name === 'addReview') return 'add'
+  if (name === 'reviews' || name === 'editReview') return 'reviews'
+  if (name === 'places' || name === 'placeDetail' || name === 'addPlace' || name === 'editPlace') return 'places'
   if (name === 'stats') return 'stats'
   if (name === 'settings') return 'settings'
-  return name || 'map'
+  return 'reviews'
 }
 
 const onTabClick = (tab: (typeof tabs)[number]) => {
@@ -35,12 +36,11 @@ const onTabClick = (tab: (typeof tabs)[number]) => {
     <div
       v-for="tab in tabs"
       :key="tab.name"
-      :class="['tab-item', { active: active() === tab.name, 'tab-add': tab.name === 'add' }]"
+      :class="['tab-item', { active: active() === tab.name }]"
       @click.stop="onTabClick(tab)"
     >
       <div class="tab-icon">
-        <van-icon v-if="tab.name !== 'add'" :name="tab.icon" />
-        <span v-else class="add-text">＋</span>
+        <van-icon :name="tab.icon" size="22" />
       </div>
       <span class="tab-label">{{ tab.label }}</span>
     </div>
@@ -76,25 +76,8 @@ const onTabClick = (tab: (typeof tabs)[number]) => {
   color: var(--color-primary);
 }
 
-.tab-add .tab-icon {
-  background: var(--color-primary);
-  color: white;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: -8px;
-}
-
-.add-text {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.tab-icon {
-  font-size: 20px;
+.tab-item .tab-icon {
+  font-size: 22px;
 }
 
 .tab-label {

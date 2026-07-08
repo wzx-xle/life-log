@@ -87,5 +87,6 @@ onMounted(async () => {
 .add-review-page {
   min-height: 100vh;
   background: var(--color-bg);
+  padding-top: var(--spacing-sm);
 }
 </style>

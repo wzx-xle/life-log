@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
   {
@@ -9,12 +9,6 @@ const routes = [
   },
   {
     path: '/',
-    name: 'map',
-    meta: { tabBar: true },
-    component: () => import('@/views/MapPage.vue'),
-  },
-  {
-    path: '/reviews',
     name: 'reviews',
     meta: { tabBar: true },
     component: () => import('@/views/ReviewListPage.vue'),
@@ -28,6 +22,12 @@ const routes = [
     path: '/reviews/edit/:id',
     name: 'editReview',
     component: () => import('@/views/AddReviewPage.vue'),
+  },
+  {
+    path: '/places',
+    name: 'places',
+    meta: { tabBar: true },
+    component: () => import('@/views/PlaceListPage.vue'),
   },
   {
     path: '/places/:id',
@@ -64,7 +64,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
 })
 

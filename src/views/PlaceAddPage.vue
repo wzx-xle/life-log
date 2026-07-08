@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, nextTick } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { Place, Category } from '@/types'
 import { useDatabase } from '@/composables/useDatabase'
 import { usePlaceStore } from '@/stores/usePlaceStore'
+import { mapPickResult } from '@/composables/mapPickState'
 import PlaceForm from '@/components/place/PlaceForm.vue'
 import type { PlaceFormData } from '@/components/place/PlaceForm.vue'
 import { showToast } from 'vant'
@@ -31,24 +32,14 @@ const prefillQuery = computed(() => {
 
 const placeFormRef = ref<InstanceType<typeof PlaceForm>>()
 
-const applyMapPickResult = async () => {
-  const raw = sessionStorage.getItem('mapPickResult')
-  if (!raw) return
-  sessionStorage.removeItem('mapPickResult')
-  try {
-    const { lat, lng, address } = JSON.parse(raw)
-    if (lat && lng && placeFormRef.value) {
-      await nextTick()
-      const form = placeFormRef.value.form
-      form.lat = lat
-      form.lng = lng
-      form.address = address || ''
-    }
-  } catch { /* ignore */ }
-}
-
-onMounted(() => {
-  setTimeout(applyMapPickResult, 100)
+watch(mapPickResult, (val) => {
+  if (val && placeFormRef.value) {
+    const form = placeFormRef.value.form
+    form.lat = val.lat
+    form.lng = val.lng
+    form.address = val.address || ''
+    mapPickResult.value = null
+  }
 })
 
 const onSubmit = async (data: PlaceFormData) => {
@@ -66,9 +57,9 @@ const onSubmit = async (data: PlaceFormData) => {
     place.id = id as number
     store.addPlace(place)
     showToast('添加成功')
-    router.push({ name: 'map' })
-  } catch {
-    showToast('添加失败，请重试')
+    setTimeout(() => router.back(), 300)
+  } catch (err: any) {
+    showToast(err?.message || '添加失败，请重试')
   }
 }
 
