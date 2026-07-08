@@ -65,34 +65,39 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="add-review-page">
+  <div class="page-wrapper">
     <van-nav-bar
       :title="pageTitle"
       left-arrow
       @click-left="handleCancel"
     />
 
-    <ReviewFull
-      v-if="ready"
-      :key="existingReview?.id"
-      :place-id="existingReview?.placeId || placeId"
-      :review="existingReview"
-      @submit="handleSubmit"
-      @cancel="handleCancel"
-    />
+    <div class="page-content">
+      <ReviewFull
+        v-if="ready"
+        :key="existingReview?.id"
+        :place-id="existingReview?.placeId || placeId"
+        :review="existingReview"
+        @submit="handleSubmit"
+        @cancel="handleCancel"
+      />
+    </div>
   </div>
 </template>
 
 <style scoped>
-.add-review-page {
+.page-wrapper {
   min-height: 100vh;
   background: var(--color-bg);
-  padding-top: var(--spacing-lg);
 }
 
-.add-review-page :deep(.van-nav-bar) {
+.page-wrapper :deep(.van-nav-bar) {
   position: sticky;
   top: 0;
   z-index: 10;
+}
+
+.page-content {
+  padding-top: var(--spacing-lg);
 }
 </style>

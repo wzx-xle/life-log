@@ -97,7 +97,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="category-manage-page">
+  <div class="page-wrapper">
     <van-nav-bar title="分类管理" left-arrow @click-left="goBack" />
 
     <div class="page-content">
@@ -187,12 +187,12 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.category-manage-page {
+.page-wrapper {
   min-height: 100vh;
   background: var(--color-bg);
 }
 
-.category-manage-page :deep(.van-nav-bar) {
+.page-wrapper :deep(.van-nav-bar) {
   position: sticky;
   top: 0;
   z-index: 10;

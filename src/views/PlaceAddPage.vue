@@ -71,15 +71,17 @@ const onPickLocation = () => {
 <template>
   <div class="page-wrapper">
     <van-nav-bar title="添加店铺" left-arrow @click-left="onCancel" />
-    <PlaceForm
-      ref="placeFormRef"
-      :place="prefillQuery"
-      @submit="onSubmit"
-      @cancel="onCancel"
-      @pick-location="onPickLocation"
-    />
-    <div class="cancel-wrap">
-      <van-button round block plain @click="onCancel">取消</van-button>
+    <div class="page-content">
+      <PlaceForm
+        ref="placeFormRef"
+        :place="prefillQuery"
+        @submit="onSubmit"
+        @cancel="onCancel"
+        @pick-location="onPickLocation"
+      />
+      <div class="cancel-wrap">
+        <van-button round block plain @click="onCancel">取消</van-button>
+      </div>
     </div>
   </div>
 </template>
@@ -94,7 +96,10 @@ const onPickLocation = () => {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--color-bg-white);
+}
+
+.page-content {
+  padding-top: var(--spacing-lg);
 }
 
 .cancel-wrap {

@@ -105,17 +105,19 @@ const handleDelete = async () => {
         <van-icon name="delete-o" size="20" color="var(--color-danger)" @click="handleDelete" />
       </template>
     </van-nav-bar>
-    <van-loading v-if="loading" class="loading-center" />
-    <PlaceForm
-      v-else
-      ref="placeFormRef"
-      :place="place"
-      @submit="onSubmit"
-      @cancel="onCancel"
-      @pick-location="onPickLocation"
-    />
-    <div class="cancel-wrap">
-      <van-button round block plain @click="onCancel">取消</van-button>
+    <div class="page-content">
+      <van-loading v-if="loading" class="loading-center" />
+      <PlaceForm
+        v-else
+        ref="placeFormRef"
+        :place="place"
+        @submit="onSubmit"
+        @cancel="onCancel"
+        @pick-location="onPickLocation"
+      />
+      <div class="cancel-wrap">
+        <van-button round block plain @click="onCancel">取消</van-button>
+      </div>
     </div>
   </div>
 </template>
@@ -130,7 +132,10 @@ const handleDelete = async () => {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--color-bg-white);
+}
+
+.page-content {
+  padding-top: var(--spacing-lg);
 }
 
 .loading-center {
