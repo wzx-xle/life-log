@@ -235,18 +235,18 @@ defineExpose({ form })
 
 <template>
   <div class="place-form">
-    <van-field
-      v-model="form.name"
-      label="店铺名称"
-      placeholder="请输入店铺名称"
-      :maxlength="50"
-      required
-    />
+    <van-cell-group inset>
+      <van-field
+        v-model="form.name"
+        label="店铺名称"
+        placeholder="请输入店铺名称"
+        :maxlength="50"
+        required
+      />
+    </van-cell-group>
 
-    <div class="form-section">
-      <div class="section-label">
-        <span class="required-star">*</span>分类
-      </div>
+    <div class="section">
+      <p class="section-label"><span class="required-star">*</span>分类</p>
       <div class="category-grid">
         <div
           v-for="(opt, idx) in allCategoryItems"
@@ -263,32 +263,34 @@ defineExpose({ form })
       </div>
     </div>
 
-    <van-field
-      v-model="form.address"
-      label="地址"
-      placeholder="请输入店铺地址"
-      required
-    >
-      <template #button>
-        <span class="pick-location-btn" @click="handlePickLocation">地图选点</span>
-      </template>
-    </van-field>
+    <van-cell-group inset>
+      <van-field
+        v-model="form.address"
+        label="地址"
+        placeholder="请输入店铺地址"
+        required
+      >
+        <template #button>
+          <span class="pick-location-btn" @click="handlePickLocation">地图选点</span>
+        </template>
+      </van-field>
 
-    <van-field
-      v-model="form.phone"
-      label="电话"
-      type="tel"
-      placeholder="请输入联系电话"
-    />
+      <van-field
+        v-model="form.phone"
+        label="电话"
+        type="tel"
+        placeholder="请输入联系电话"
+      />
 
-    <van-field
-      v-model="form.businessHours"
-      label="营业时间"
-      placeholder="09:00-22:00"
-    />
+      <van-field
+        v-model="form.businessHours"
+        label="营业时间"
+        placeholder="09:00-22:00"
+      />
+    </van-cell-group>
 
-    <div class="form-section">
-      <div class="section-label">标签</div>
+    <div class="section">
+      <p class="section-label">标签</p>
       <div class="tags-wrap">
         <van-tag
           v-for="(tag, index) in form.tags"
@@ -315,8 +317,8 @@ defineExpose({ form })
       </div>
     </div>
 
-    <div class="form-section">
-      <div class="section-label">照片 (最多9张)</div>
+    <div class="section">
+      <p class="section-label">照片 (最多9张)</p>
       <van-uploader
         v-model="fileList"
         :max-count="9"
@@ -375,20 +377,14 @@ defineExpose({ form })
   padding-bottom: var(--spacing-xl);
 }
 
-.place-form :deep(.van-field) {
-  margin-bottom: 1px;
-}
-
-.form-section {
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--color-bg-white);
-  margin-bottom: 1px;
+.section {
+  padding: var(--spacing-lg);
 }
 
 .section-label {
-  font-size: var(--font-size-md);
-  color: var(--color-text);
-  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-sm);
 }
 
 .required-star {
@@ -468,7 +464,8 @@ defineExpose({ form })
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
-  padding: var(--spacing-xl) var(--spacing-lg);
+  padding: 0 var(--spacing-lg);
+  margin-top: var(--spacing-xl);
 }
 
 .category-item.category-add-btn {

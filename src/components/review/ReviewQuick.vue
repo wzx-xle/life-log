@@ -217,8 +217,4 @@ onMounted(() => {
   padding: 0 var(--spacing-lg);
   margin-top: var(--spacing-xl);
 }
-
-}
-
-}
 </style>
