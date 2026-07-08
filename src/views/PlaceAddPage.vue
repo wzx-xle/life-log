@@ -79,9 +79,6 @@ const onPickLocation = () => {
         @cancel="onCancel"
         @pick-location="onPickLocation"
       />
-      <div class="cancel-wrap">
-        <van-button round block plain @click="onCancel">取消</van-button>
-      </div>
     </div>
   </div>
 </template>
@@ -101,10 +98,5 @@ const onPickLocation = () => {
 
 .page-content {
   padding-top: var(--spacing-lg);
-}
-
-.cancel-wrap {
-  padding: var(--spacing-md) var(--spacing-lg);
-  padding-bottom: calc(var(--spacing-xl) + var(--safe-bottom));
 }
 </style>

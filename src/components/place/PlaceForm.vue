@@ -346,6 +346,7 @@ defineExpose({ form })
       <van-button round block type="primary" @click="handleSubmit">
         {{ isEdit ? '保存修改' : '添加店铺' }}
       </van-button>
+      <van-button round block plain @click="emit('cancel')">取消</van-button>
     </div>
 
     <van-popup
@@ -479,6 +480,9 @@ defineExpose({ form })
 }
 
 .form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
   padding: var(--spacing-xl) var(--spacing-lg);
 }
 
