@@ -3,3 +3,6 @@ dist/
 .env.local
 .env.production
 .env.ftp
+tsconfig.tsbuildinfo
+.claude/
+.opencode/
