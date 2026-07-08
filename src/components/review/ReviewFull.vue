@@ -356,7 +356,6 @@ onMounted(async () => {
               @click="selectPlace(place.id!)"
             >
               <span class="picker-place-name">{{ place.name }}</span>
-              <span class="picker-place-cat">{{ getLabel(place) }}</span>
             </div>
             <div v-if="filteredPickerPlaces.length === 0" class="picker-empty">
               暂无店铺
@@ -525,7 +524,6 @@ onMounted(async () => {
 .picker-place {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: var(--spacing-md) var(--spacing-lg);
   border-bottom: 1px solid var(--color-border);
   cursor: pointer;
@@ -534,11 +532,6 @@ onMounted(async () => {
 .picker-place-name {
   font-size: var(--font-size-md);
   color: var(--color-text);
-}
-
-.picker-place-cat {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
 }
 
 .picker-empty {
