@@ -141,6 +141,5 @@ const handleDelete = async () => {
   justify-content: center;
   padding-top: 40px;
 }
-
-
+</style>
 
