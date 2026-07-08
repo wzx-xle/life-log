@@ -39,5 +39,5 @@ LifeLog 所有值得关注的变更记录。
 - PostCSS px→vw 移动端适配（viewportWidth: 320）
 - Vant 4 组件按需自动导入
 
-[1.0.1]: https://github.com/--/life-log/compare/v1.0.0...v1.0.1
-[1.0.0]: https://github.com/--/life-log/releases/tag/v1.0.0
+[1.0.1]: https://github.com/wzx-xle/life-log/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/wzx-xle/life-log/releases/tag/v1.0.0
