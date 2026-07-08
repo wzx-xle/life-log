@@ -278,7 +278,7 @@ watch(
 .map-page {
   position: relative;
   width: 100%;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 56px);
   overflow: hidden;
 }
 
@@ -307,7 +307,7 @@ watch(
 
 .locate-btn {
   position: absolute;
-  bottom: 70px;
+  bottom: 76px;
   left: 12px;
   width: 40px;
   height: 40px;

@@ -288,7 +288,7 @@ onMounted(() => {
 .fab {
   position: fixed;
   right: var(--spacing-lg);
-  bottom: calc(50px + var(--spacing-lg) + var(--safe-bottom));
+  bottom: calc(56px + var(--spacing-lg) + var(--safe-bottom));
   width: 48px;
   height: 48px;
   border-radius: var(--radius-md);

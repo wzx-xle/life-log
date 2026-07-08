@@ -50,10 +50,11 @@ const onTabClick = (tab: (typeof tabs)[number]) => {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 50px;
+  height: 56px;
   background: var(--color-bg-white);
   border-top: var(--border-thick);
   z-index: 100;
+  padding-top: var(--spacing-xs)
 }
 
 .tab-item {
