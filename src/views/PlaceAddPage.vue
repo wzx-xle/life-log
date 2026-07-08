@@ -97,6 +97,6 @@ const onPickLocation = () => {
 }
 
 .page-content {
-  padding-top: var(--spacing-lg);
+  padding: var(--spacing-lg);
 }
 </style>

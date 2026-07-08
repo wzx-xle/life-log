@@ -200,7 +200,7 @@ onMounted(() => {
 }
 
 .page-content {
-  padding-top: var(--spacing-lg);
+  padding: var(--spacing-lg);
 }
 
 .empty-state {

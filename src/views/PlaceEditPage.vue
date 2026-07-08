@@ -133,7 +133,7 @@ const handleDelete = async () => {
 }
 
 .page-content {
-  padding-top: var(--spacing-lg);
+  padding: var(--spacing-lg);
 }
 
 .loading-center {

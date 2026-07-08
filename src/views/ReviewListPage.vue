@@ -157,6 +157,7 @@ onMounted(() => {
       </div>
     </div>
 
+    <div class="page-content">
     <div v-if="loading" class="loading-wrap">
       <van-loading type="spinner" />
     </div>
@@ -178,6 +179,8 @@ onMounted(() => {
 
     <div v-else class="empty-state">
       <van-empty description="还没有体验记录，点击右下角 + 添加" />
+    </div>
+
     </div>
 
     <div class="fab" @click="goToAddReview">
@@ -274,6 +277,10 @@ onMounted(() => {
   color: var(--color-text-secondary);
 }
 
+.page-content {
+  padding: var(--spacing-lg);
+}
+
 .empty-state {
   padding-top: 120px;
 }
@@ -284,7 +291,7 @@ onMounted(() => {
   bottom: calc(50px + var(--spacing-lg) + var(--safe-bottom));
   width: 48px;
   height: 48px;
-  border-radius: var(--radius-md);
+  border-radius: 50%;
   background: var(--color-primary);
   display: flex;
   align-items: center;

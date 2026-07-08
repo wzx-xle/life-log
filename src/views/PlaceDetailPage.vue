@@ -112,6 +112,7 @@ const goEditReview = (reviewId: number) => {
   <div class="page-wrapper">
     <van-nav-bar title="店铺详情" left-arrow @click-left="goBack" />
 
+    <div class="page-content">
     <van-loading v-if="loading" class="loading-center" />
 
     <template v-else-if="place">
@@ -257,12 +258,14 @@ const goEditReview = (reviewId: number) => {
         </div>
       </div>
 
-      <div class="bottom-bar safe-bottom">
-        <van-button round block type="default" @click="goEditPlace">编辑店铺</van-button>
-        <van-button round block type="primary" @click="goAddReview">写记录</van-button>
-      </div>
     </template>
   </div>
+
+  <div v-if="place" class="bottom-bar safe-bottom">
+    <van-button round block type="default" @click="goEditPlace">编辑店铺</van-button>
+    <van-button round block type="primary" @click="goAddReview">写记录</van-button>
+  </div>
+</div>
 </template>
 
 <style scoped>
@@ -278,6 +281,10 @@ const goEditReview = (reviewId: number) => {
   z-index: 10;
   background: var(--color-bg-white);
   border-bottom: 1px solid var(--color-border);
+}
+
+.page-content {
+  padding: var(--spacing-lg);
 }
 
 .loading-center {

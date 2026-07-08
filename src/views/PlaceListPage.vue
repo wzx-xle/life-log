@@ -51,6 +51,7 @@ onMounted(async () => {
       <span class="page-title">店铺</span>
     </div>
 
+    <div class="page-content">
     <van-loading v-if="loading" class="loading-wrap" />
 
     <template v-else-if="store.places.length > 0">
@@ -82,6 +83,8 @@ onMounted(async () => {
 
     <van-empty v-else description="还没有店铺，点击右下角 + 添加" />
 
+    </div>
+
     <div class="fab" @click="goToAddPlace">
       <van-icon name="plus" size="24" color="#fff" />
     </div>
@@ -111,6 +114,10 @@ onMounted(async () => {
   font-size: var(--font-size-lg);
   font-weight: 600;
   color: var(--color-text);
+}
+
+.page-content {
+  padding: var(--spacing-lg);
 }
 
 .loading-wrap {
@@ -188,7 +195,7 @@ onMounted(async () => {
   bottom: calc(50px + var(--spacing-lg) + var(--safe-bottom));
   width: 48px;
   height: 48px;
-  border-radius: var(--radius-md);
+  border-radius: 50%;
   background: var(--color-primary);
   display: flex;
   align-items: center;
