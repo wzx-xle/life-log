@@ -144,7 +144,7 @@ onMounted(loadData)
   align-items: center;
   padding: var(--spacing-lg);
   background: var(--color-bg-white);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: var(--border-thick);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -154,6 +154,7 @@ onMounted(loadData)
   font-size: var(--font-size-lg);
   font-weight: 600;
   color: var(--color-text);
+  font-family: "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
 }
 
 .stats-content {
@@ -175,7 +176,8 @@ onMounted(loadData)
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-hard);
 }
 
 .summary-value {
@@ -201,7 +203,8 @@ onMounted(loadData)
   border-radius: var(--radius-md);
   padding: 16px;
   margin-bottom: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-hard);
 }
 
 .section-title {

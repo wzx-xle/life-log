@@ -52,7 +52,7 @@ const onTabClick = (tab: (typeof tabs)[number]) => {
   align-items: center;
   height: 50px;
   background: var(--color-bg-white);
-  border-top: 1px solid var(--color-border);
+  border-top: var(--border-thick);
   z-index: 100;
 }
 
@@ -67,7 +67,8 @@ const onTabClick = (tab: (typeof tabs)[number]) => {
 }
 
 .tab-item.active .tab-label {
-  color: var(--color-primary);
+  color: var(--color-text);
+  font-weight: 700;
 }
 
 .tab-item .tab-icon {

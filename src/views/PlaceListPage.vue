@@ -101,7 +101,7 @@ onMounted(async () => {
   justify-content: space-between;
   padding: var(--spacing-lg);
   background: var(--color-bg-white);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: var(--border-thick);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -111,6 +111,7 @@ onMounted(async () => {
   font-size: var(--font-size-lg);
   font-weight: 600;
   color: var(--color-text);
+  font-family: "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
 }
 
 .loading-wrap {
@@ -132,8 +133,11 @@ onMounted(async () => {
 
 .group-label {
   font-size: var(--font-size-md);
-  font-weight: 500;
+  font-weight: 700;
   color: var(--color-text);
+  font-family: "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
+  border-bottom: var(--border-thick);
+  padding-bottom: var(--spacing-xs);
 }
 
 .group-count {
@@ -147,7 +151,7 @@ onMounted(async () => {
   justify-content: space-between;
   padding: var(--spacing-md) var(--spacing-lg);
   background: var(--color-bg-white);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: var(--border-thick);
   cursor: pointer;
 }
 
@@ -186,14 +190,19 @@ onMounted(async () => {
   bottom: calc(50px + var(--spacing-lg) + var(--safe-bottom));
   width: 48px;
   height: 48px;
-  border-radius: 50%;
+  border-radius: var(--radius-md);
   background: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-hard);
   z-index: 20;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+}
+
+.fab:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-hard-sm);
 }
 </style>
