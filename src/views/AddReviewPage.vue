@@ -99,7 +99,6 @@ onMounted(async () => {
 }
 
 .page-content {
-  padding-top: var(--spacing-lg);
-  padding-bottom: var(--spacing-lg);
+  padding: var(--spacing-lg);
 }
 </style>
