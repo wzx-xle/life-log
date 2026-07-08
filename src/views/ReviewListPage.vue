@@ -124,10 +124,6 @@ const handleReviewDeleted = (id: number) => {
   reviews.value = reviews.value.filter((r) => r.id !== id)
 }
 
-const goToMap = () => {
-  router.push({ name: 'reviews' })
-}
-
 const goToAddReview = () => {
   router.push({ name: 'addReview' })
 }
@@ -181,9 +177,7 @@ onMounted(() => {
     </template>
 
     <div v-else class="empty-state">
-      <van-empty description="还没有体验记录，去地图上添加吧">
-        <van-button round type="primary" @click="goToMap">去地图</van-button>
-      </van-empty>
+      <van-empty description="还没有体验记录，点击右下角 + 添加" />
     </div>
 
     <div class="fab" @click="goToAddReview">
