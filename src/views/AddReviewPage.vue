@@ -87,6 +87,12 @@ onMounted(async () => {
 .add-review-page {
   min-height: 100vh;
   background: var(--color-bg);
-  padding-top: var(--spacing-sm);
+  padding-top: var(--spacing-lg);
+}
+
+.add-review-page :deep(.van-nav-bar) {
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 </style>

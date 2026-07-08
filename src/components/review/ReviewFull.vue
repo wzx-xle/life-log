@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { showToast } from 'vant'
-import { useRouter } from 'vue-router'
 import Compressor from 'compressorjs'
-import type { Review, ConsumptionItem } from '@/types'
+import type { Review, ConsumptionItem, Place } from '@/types'
 import { usePlaceStore } from '@/stores/placeStore'
+import { useCategoryDisplay } from '@/composables/useCategoryDisplay'
 import RatingStar from './RatingStar.vue'
 
 defineOptions({ name: 'ReviewFull' })
@@ -20,6 +20,7 @@ const emit = defineEmits<{
 }>()
 
 const placeStore = usePlaceStore()
+const { loadCustomCategories, getLabel } = useCategoryDisplay()
 
 const selectedPlaceId = ref<number | undefined>(props.placeId)
 const dateStr = ref(formatDateStr(new Date()))
@@ -49,20 +50,27 @@ const selectedPlace = computed(() =>
 )
 const placeLabel = computed(() => selectedPlace.value?.name || '请选择地点')
 
-const router = useRouter()
+const pickerCategory = ref('全部')
 
-const placeActions = computed(() => [
-  { name: '+ 新建店铺', id: -1 },
-  ...placeStore.places.map((p) => ({ name: p.name, id: p.id })),
-])
+const pickerCategories = computed(() => {
+  const cats = new Set<string>()
+  placeStore.places.forEach((p) => {
+    cats.add(getLabel(p))
+  })
+  return ['全部', ...Array.from(cats)]
+})
 
-const onSelectPlace = (action: { name: string; id: number }) => {
-  if (action.id === -1) {
-    showPlacePicker.value = false
-    router.push({ name: 'addPlace' })
-    return
-  }
-  selectedPlaceId.value = action.id
+const filteredPickerPlaces = computed<Place[]>(() => {
+  if (pickerCategory.value === '全部') return placeStore.places
+  return placeStore.places.filter((p) => getLabel(p) === pickerCategory.value)
+})
+
+const selectPickerCategory = (cat: string) => {
+  pickerCategory.value = cat
+}
+
+const selectPlace = (id: number) => {
+  selectedPlaceId.value = id
   showPlacePicker.value = false
 }
 
@@ -183,8 +191,8 @@ watch(() => props.review, (newVal) => {
   if (newVal) applyReviewData(newVal)
 }, { immediate: true })
 
-onMounted(() => {
-  placeStore.fetchPlaces()
+onMounted(async () => {
+  await Promise.all([placeStore.fetchPlaces(), loadCustomCategories()])
 })
 </script>
 
@@ -323,12 +331,43 @@ onMounted(() => {
       <van-button round block plain @click="emit('cancel')">取消</van-button>
     </div>
 
-    <van-action-sheet
+    <van-popup
       v-model:show="showPlacePicker"
-      :actions="placeActions"
-      @select="onSelectPlace"
-      title="选择地点"
-    />
+      position="bottom"
+      round
+      :style="{ height: '60%' }"
+    >
+      <div class="place-picker">
+        <h4 class="picker-title">选择地点</h4>
+        <div class="picker-body">
+          <div class="picker-left">
+            <div
+              v-for="cat in pickerCategories"
+              :key="cat"
+              :class="['picker-cat', { active: pickerCategory === cat }]"
+              @click="selectPickerCategory(cat)"
+            >{{ cat }}</div>
+          </div>
+          <div class="picker-right">
+            <div
+              v-for="place in filteredPickerPlaces"
+              :key="place.id"
+              class="picker-place"
+              @click="selectPlace(place.id!)"
+            >
+              <span class="picker-place-name">{{ place.name }}</span>
+              <span class="picker-place-cat">{{ getLabel(place) }}</span>
+            </div>
+            <div v-if="filteredPickerPlaces.length === 0" class="picker-empty">
+              暂无店铺
+            </div>
+          </div>
+        </div>
+        <div class="picker-footer">
+          <van-button block round plain @click="showPlacePicker = false">取消</van-button>
+        </div>
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -429,5 +468,89 @@ onMounted(() => {
   gap: var(--spacing-sm);
   padding: 0 var(--spacing-lg);
   margin-top: var(--spacing-xl);
+}
+
+/* Two-column place picker */
+.place-picker {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.picker-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: center;
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.picker-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.picker-left {
+  width: 100px;
+  background: var(--color-bg);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.picker-cat {
+  padding: var(--spacing-md) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+}
+
+.picker-cat.active {
+  color: var(--color-primary);
+  background: var(--color-bg-white);
+  border-left-color: var(--color-primary);
+}
+
+.picker-right {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--color-bg-white);
+}
+
+.picker-place {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+}
+
+.picker-place-name {
+  font-size: var(--font-size-md);
+  color: var(--color-text);
+}
+
+.picker-place-cat {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.picker-empty {
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.picker-footer {
+  padding: var(--spacing-md) var(--spacing-lg);
+  padding-bottom: calc(var(--spacing-md) + var(--safe-bottom));
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 </style>

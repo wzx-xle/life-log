@@ -98,41 +98,44 @@ onMounted(() => {
 
 <template>
   <div class="category-manage-page">
-    <van-nav-bar title="分类管理" left-text="返回" left-arrow @click-left="goBack" />
+    <van-nav-bar title="分类管理" left-arrow @click-left="goBack" />
 
-    <div v-if="categories.length === 0" class="empty-state">
-      <van-empty description="暂无分类，点击下方按钮创建" />
-    </div>
+    <div class="page-content">
+      <div v-if="categories.length === 0" class="empty-state">
+        <van-empty description="暂无分类，点击下方按钮创建" />
+      </div>
 
-    <van-cell-group v-else inset>
-      <van-cell
-        v-for="cat in categories"
-        :key="cat.id"
-        center
-        @click="openEdit(cat)"
-      >
-        <template #icon>
-          <span class="color-dot" :style="{ backgroundColor: cat.color }"></span>
-        </template>
-        <template #title>
-          <span class="cat-name">{{ cat.name }}</span>
-          <van-tag v-if="cat.isPreset" type="warning" class="preset-tag">预设</van-tag>
-        </template>
-        <template #right-icon>
-          <van-button
-            size="small"
-            type="danger"
-            plain
-            @click.stop="handleDelete(cat)"
-          >
-            删除
-          </van-button>
-        </template>
-      </van-cell>
-    </van-cell-group>
+      <van-cell-group v-else inset>
+        <van-cell
+          v-for="cat in categories"
+          :key="cat.id"
+          center
+          @click="openEdit(cat)"
+        >
+          <template #icon>
+            <span class="color-dot" :style="{ backgroundColor: cat.color }"></span>
+          </template>
+          <template #title>
+            <span class="cat-name">{{ cat.name }}</span>
+            <van-tag v-if="cat.isPreset" type="warning" class="preset-tag">预设</van-tag>
+          </template>
+          <template #right-icon>
+            <van-button
+              size="small"
+              type="danger"
+              plain
+              @click.stop="handleDelete(cat)"
+            >
+              删除
+            </van-button>
+          </template>
+        </van-cell>
+      </van-cell-group>
 
-    <div class="add-btn-wrap">
-      <van-button type="primary" block round @click="openAdd">新增分类</van-button>
+      <div class="add-btn-wrap">
+        <van-button type="primary" block round @click="openAdd">新增分类</van-button>
+      </div>
+
     </div>
 
     <van-popup
@@ -187,6 +190,16 @@ onMounted(() => {
 .category-manage-page {
   min-height: 100vh;
   background: var(--color-bg);
+}
+
+.category-manage-page :deep(.van-nav-bar) {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.page-content {
+  padding-top: var(--spacing-lg);
 }
 
 .empty-state {

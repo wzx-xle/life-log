@@ -4,6 +4,21 @@ LifeLog 所有值得关注的变更记录。
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.0.2] - 2026-07-08
+
+### 新增
+
+- 记录新增页地点选择弹出框改为两列布局（左分类 + 右店铺），移除非必要的新建店铺入口
+- 新增/编辑店铺页分类区域末尾增加 + 按钮，支持在当前位置创建自定义分类
+
+### 变更
+
+- 记录新增页、新增店铺页、编辑店铺页、分类管理页标题栏统一为 sticky 固定模式
+- 新增店铺页、编辑店铺页、分类管理页返回按钮统一仅保留箭头，不显示文字
+- 记录新增页、分类管理页内容区顶部留白加大（`var(--spacing-sm)` → `var(--spacing-lg)`），保持 UI 统一
+- 店铺编辑页新增底部取消按钮，与新增页交互一致
+- 导出数据版本号升级至 1.0.2
+
 ## [1.0.1] - 2026-07-08
 
 ### 新增
@@ -39,5 +54,6 @@ LifeLog 所有值得关注的变更记录。
 - PostCSS px→vw 移动端适配（viewportWidth: 320）
 - Vant 4 组件按需自动导入
 
+[1.0.2]: https://github.com/wzx-xle/life-log/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/wzx-xle/life-log/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/wzx-xle/life-log/releases/tag/v1.0.0

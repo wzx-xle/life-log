@@ -70,7 +70,7 @@ const onPickLocation = () => {
 
 <template>
   <div class="page-wrapper">
-    <van-nav-bar title="添加店铺" left-text="返回" left-arrow @click-left="onCancel" />
+    <van-nav-bar title="添加店铺" left-arrow @click-left="onCancel" />
     <PlaceForm
       ref="placeFormRef"
       :place="prefillQuery"
@@ -78,6 +78,9 @@ const onPickLocation = () => {
       @cancel="onCancel"
       @pick-location="onPickLocation"
     />
+    <div class="cancel-wrap">
+      <van-button round block plain @click="onCancel">取消</van-button>
+    </div>
   </div>
 </template>
 
@@ -88,6 +91,14 @@ const onPickLocation = () => {
 }
 
 .page-wrapper :deep(.van-nav-bar) {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   background: var(--color-bg-white);
+}
+
+.cancel-wrap {
+  padding: var(--spacing-md) var(--spacing-lg);
+  padding-bottom: calc(var(--spacing-xl) + var(--safe-bottom));
 }
 </style>

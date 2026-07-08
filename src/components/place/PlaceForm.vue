@@ -33,8 +33,17 @@ const emit = defineEmits<{
 }>()
 
 const isEdit = computed(() => !!props.place)
-const { getAllCustomCategories } = useDatabase()
+const { getAllCustomCategories, addCustomCategory } = useDatabase()
 const customCategories = ref<CustomCategory[]>([])
+
+const showNewCatPopup = ref(false)
+const newCatName = ref('')
+const newCatColor = ref('#FF6B35')
+const PRESET_COLORS = [
+  '#FF6B35', '#E74C3C', '#E91E63', '#9C27B0',
+  '#4A90D9', '#2196F3', '#00BCD4', '#009688',
+  '#52C41A', '#8BC34A', '#FF9800', '#795548',
+]
 
 interface CategoryOption { value: Category; label: string; color: string }
 
@@ -67,8 +76,39 @@ function selectCategory(opt: CategoryOption) {
   }
 }
 
-onMounted(async () => {
+async function refreshCategories() {
   customCategories.value = await getAllCustomCategories()
+}
+
+async function handleCreateCategory() {
+  const name = newCatName.value.trim()
+  if (!name) {
+    showToast('请输入分类名称')
+    return
+  }
+  const exists = customCategories.value.find((c) => c.name === name)
+  if (exists) {
+    showToast('分类名称已存在')
+    return
+  }
+  try {
+    await addCustomCategory({ name, color: newCatColor.value, createdAt: new Date() })
+    showToast('分类已创建')
+    showNewCatPopup.value = false
+    await refreshCategories()
+  } catch {
+    showToast('创建失败，请重试')
+  }
+}
+
+function openNewCatPopup() {
+  newCatName.value = ''
+  newCatColor.value = PRESET_COLORS[0]
+  showNewCatPopup.value = true
+}
+
+onMounted(async () => {
+  await refreshCategories()
 })
 
 const form = reactive<PlaceFormData>({
@@ -223,6 +263,9 @@ defineExpose({ form })
           <span class="category-dot" :style="{ backgroundColor: opt.color }"></span>
           <span class="category-label">{{ opt.label }}</span>
         </div>
+        <div class="category-item category-add-btn" @click="openNewCatPopup">
+          <van-icon name="plus" size="18" />
+        </div>
       </div>
     </div>
 
@@ -304,6 +347,39 @@ defineExpose({ form })
         {{ isEdit ? '保存修改' : '添加店铺' }}
       </van-button>
     </div>
+
+    <van-popup
+      v-model:show="showNewCatPopup"
+      position="bottom"
+      round
+      :close-on-click-overlay="false"
+    >
+      <div class="new-cat-form">
+        <h4 class="new-cat-title">新增分类</h4>
+        <van-field
+          v-model="newCatName"
+          label="名称"
+          placeholder="请输入分类名称"
+          :maxlength="20"
+        />
+        <div class="color-section">
+          <div class="color-label">颜色</div>
+          <div class="color-grid">
+            <span
+              v-for="c in PRESET_COLORS"
+              :key="c"
+              :class="['color-swatch', { active: newCatColor === c }]"
+              :style="{ backgroundColor: c }"
+              @click="newCatColor = c"
+            ></span>
+          </div>
+        </div>
+        <div class="new-cat-actions">
+          <van-button round block type="primary" @click="handleCreateCategory">创建</van-button>
+          <van-button round block plain @click="showNewCatPopup = false">取消</van-button>
+        </div>
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -402,5 +478,65 @@ defineExpose({ form })
 
 .form-actions {
   padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.category-item.category-add-btn {
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+}
+
+.category-item.category-add-btn:active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.new-cat-form {
+  padding: var(--spacing-xl) var(--spacing-lg);
+  padding-bottom: calc(var(--spacing-xl) + var(--safe-bottom));
+}
+
+.new-cat-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-lg);
+}
+
+.color-section {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-bg-white);
+  margin-top: 1px;
+}
+
+.color-label {
+  font-size: var(--font-size-md);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-md);
+}
+
+.color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.color-swatch.active {
+  border-color: var(--color-text);
+}
+
+.new-cat-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
 }
 </style>
