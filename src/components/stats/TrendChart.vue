@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import * as echarts from 'echarts'
+import type { ECharts } from '@/utils/echarts'
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import type { Review } from '@/types'
 
@@ -8,7 +8,8 @@ const props = defineProps<{
 }>()
 
 const chartRef = ref<HTMLElement>()
-let chartInstance: echarts.ECharts | null = null
+let chartInstance: ECharts | null = null
+let echartsGraphic: typeof import('@/utils/echarts').graphic | null = null
 
 function getMonthlyData() {
   const now = new Date()
@@ -34,11 +35,13 @@ function getMonthlyData() {
   return { monthLabels, amounts }
 }
 
-function renderChart() {
+async function renderChart() {
   if (!chartRef.value) return
   if (chartInstance) chartInstance.dispose()
 
+  const echarts = await import('@/utils/echarts')
   chartInstance = echarts.init(chartRef.value)
+  echartsGraphic = echarts.graphic
   const { monthLabels, amounts } = getMonthlyData()
 
   chartInstance.setOption({
@@ -76,7 +79,7 @@ function renderChart() {
         lineStyle: { color: '#FF6B35', width: 2 },
         itemStyle: { color: '#FF6B35' },
         areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          color: new echartsGraphic!.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(255,107,53,0.25)' },
             { offset: 1, color: 'rgba(255,107,53,0.02)' },
           ]),

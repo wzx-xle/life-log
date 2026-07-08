@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import * as echarts from 'echarts'
+import type { ECharts } from '@/utils/echarts'
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import type { Review } from '@/types'
 
@@ -8,7 +8,7 @@ const props = defineProps<{
 }>()
 
 const chartRef = ref<HTMLElement>()
-let chartInstance: echarts.ECharts | null = null
+let chartInstance: ECharts | null = null
 
 function getRatingData() {
   const dist: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
@@ -19,11 +19,12 @@ function getRatingData() {
   return [1, 2, 3, 4, 5].map((n) => ({ label: `${n}星`, count: dist[n] }))
 }
 
-function renderChart() {
+async function renderChart() {
   if (!chartRef.value) return
   if (chartInstance) chartInstance.dispose()
 
-  chartInstance = echarts.init(chartRef.value)
+  const { init } = await import('@/utils/echarts')
+  chartInstance = init(chartRef.value)
   const data = getRatingData()
 
   chartInstance.setOption({

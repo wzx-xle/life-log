@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import * as echarts from 'echarts'
+import type { ECharts } from '@/utils/echarts'
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import type { Review, Place, Category, CustomCategory } from '@/types'
 import { CATEGORY_LABELS, CATEGORY_COLORS } from '@/types'
@@ -18,7 +18,7 @@ const { getAllCustomCategories } = useDatabase()
 
 const chartRef = ref<HTMLElement>()
 const customCategories = ref<CustomCategory[]>([])
-let chartInstance: echarts.ECharts | null = null
+let chartInstance: ECharts | null = null
 
 function getDisplayLabel(key: string): string {
   return CATEGORY_LABELS[key as Category] || key
@@ -65,7 +65,8 @@ async function renderChart() {
   if (!chartRef.value) return
   if (chartInstance) chartInstance.dispose()
 
-  chartInstance = echarts.init(chartRef.value)
+  const { init } = await import('@/utils/echarts')
+  chartInstance = init(chartRef.value)
   const data = await getCategoryData()
 
   if (data.length === 0) {
