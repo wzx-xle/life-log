@@ -128,6 +128,10 @@ const goToMap = () => {
   router.push({ name: 'reviews' })
 }
 
+const goToAddReview = () => {
+  router.push({ name: 'addReview' })
+}
+
 onMounted(() => {
   loadData()
 })
@@ -180,6 +184,10 @@ onMounted(() => {
       <van-empty description="还没有体验记录，去地图上添加吧">
         <van-button round type="primary" @click="goToMap">去地图</van-button>
       </van-empty>
+    </div>
+
+    <div class="fab" @click="goToAddReview">
+      <van-icon name="plus" size="24" color="#fff" />
     </div>
   </div>
 </template>
@@ -272,5 +280,22 @@ onMounted(() => {
 
 .empty-state {
   padding-top: 120px;
+}
+
+.fab {
+  position: fixed;
+  right: var(--spacing-lg);
+  bottom: calc(50px + var(--spacing-lg) + var(--safe-bottom));
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 20;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 </style>

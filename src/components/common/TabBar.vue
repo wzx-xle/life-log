@@ -7,15 +7,13 @@ const router = useRouter()
 const tabs = [
   { name: 'reviews', label: '记录', icon: 'notes-o' },
   { name: 'places', label: '店铺', icon: 'shop-o' },
-  { name: 'add', label: '添加', icon: 'plus' },
   { name: 'stats', label: '统计', icon: 'chart-trending-o' },
   { name: 'settings', label: '设置', icon: 'setting-o' },
 ]
 
 const active = (): string => {
   const name = String(route.name || '')
-  if (name === 'addReview') return 'add'
-  if (name === 'reviews' || name === 'editReview') return 'reviews'
+  if (name === 'reviews' || name === 'editReview' || name === 'addReview') return 'reviews'
   if (name === 'places' || name === 'placeDetail' || name === 'addPlace' || name === 'editPlace') return 'places'
   if (name === 'stats') return 'stats'
   if (name === 'settings') return 'settings'
@@ -23,10 +21,6 @@ const active = (): string => {
 }
 
 const onTabClick = (tab: (typeof tabs)[number]) => {
-  if (tab.name === 'add') {
-    router.push({ name: 'addReview' })
-    return
-  }
   router.push({ name: tab.name })
 }
 </script>

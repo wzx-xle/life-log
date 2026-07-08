@@ -114,126 +114,145 @@ function onAutoLockConfirm({ selectedOptions }: any) {
 
 <template>
   <div class="settings-page">
-    <div class="page-title">设置</div>
+    <div class="page-header">
+      <span class="page-title">设置</span>
+    </div>
 
-    <div class="section-label">安全设置</div>
-    <van-cell-group inset>
-      <van-cell title="密码锁" center>
-        <template #right-icon>
-          <van-switch
-            :model-value="pwdEnabled"
-            size="24px"
-            @update:model-value="onPwdToggle"
+    <div class="settings-content">
+        <div class="section-label">安全设置</div>
+        <van-cell-group inset>
+          <van-cell title="密码锁" center>
+            <template #right-icon>
+              <van-switch
+                :model-value="pwdEnabled"
+                size="24px"
+                @update:model-value="onPwdToggle"
+              />
+            </template>
+          </van-cell>
+          <van-cell
+            title="自动锁定时间"
+            :value="autoLockText"
+            is-link
+            @click="showAutoLockPicker = true"
           />
-        </template>
-      </van-cell>
-      <van-cell
-        title="自动锁定时间"
-        :value="autoLockText"
-        is-link
-        @click="showAutoLockPicker = true"
-      />
-      <van-cell
-        v-if="isPasswordSet() || pwdEnabled"
-        title="修改密码"
-        is-link
-        @click="openChangePwd"
-      />
-      <van-cell
-        v-if="isPasswordSet() || pwdEnabled"
-        title="重置密码"
-        is-link
-        title-class="danger-text"
-        @click="handleResetPwd"
-      />
-    </van-cell-group>
+          <van-cell
+            v-if="isPasswordSet() || pwdEnabled"
+            title="修改密码"
+            is-link
+            @click="openChangePwd"
+          />
+          <van-cell
+            v-if="isPasswordSet() || pwdEnabled"
+            title="重置密码"
+            is-link
+            title-class="danger-text"
+            @click="handleResetPwd"
+          />
+        </van-cell-group>
 
-    <div class="section-label">数据管理</div>
-    <van-cell-group inset>
-      <van-cell title="分类管理" is-link @click="router.push({ name: 'categoryManage' })" />
-      <van-cell title="导出数据" is-link @click="$emit('export')" />
-      <van-cell title="导入数据" is-link @click="$emit('import')" />
-    </van-cell-group>
+        <div class="section-label">数据管理</div>
+        <van-cell-group inset>
+          <van-cell title="分类管理" is-link @click="router.push({ name: 'categoryManage' })" />
+          <van-cell title="导出数据" is-link @click="$emit('export')" />
+          <van-cell title="导入数据" is-link @click="$emit('import')" />
+        </van-cell-group>
 
-    <div class="section-label">关于</div>
-    <van-cell-group inset>
-      <van-cell title="应用名称" value="LifeLog" />
-      <van-cell title="版本号" value="1.0.0" />
-      <van-cell title="隐私说明" label="所有数据仅存储在本地浏览器，不会上传至任何服务器" />
-    </van-cell-group>
+        <div class="section-label">关于</div>
+        <van-cell-group inset>
+          <van-cell title="应用名称" value="LifeLog" />
+          <van-cell title="版本号" value="1.0.0" />
+          <van-cell title="隐私说明" label="所有数据仅存储在本地浏览器，不会上传至任何服务器" />
+        </van-cell-group>
 
-    <van-popup v-model:show="showAutoLockPicker" position="bottom" round>
-      <van-picker
-        :columns="autoLockOptions"
-        title="选择自动锁定时间"
-        @confirm="onAutoLockConfirm"
-        @cancel="showAutoLockPicker = false"
-      />
-    </van-popup>
+        <van-popup v-model:show="showAutoLockPicker" position="bottom" round>
+          <van-picker
+            :columns="autoLockOptions"
+            title="选择自动锁定时间"
+            @confirm="onAutoLockConfirm"
+            @cancel="showAutoLockPicker = false"
+          />
+        </van-popup>
 
-    <van-dialog
-      v-model:show="showCreatePwdDialog"
-      title="设置密码"
-      show-cancel-button
-      @confirm="handleCreatePwd"
-    >
-      <div class="dialog-body">
-        <van-field
-          v-model="newPwd"
-          type="password"
-          placeholder="请输入密码（至少4位）"
-          maxlength="20"
-        />
-        <van-field
-          v-model="confirmPwd"
-          type="password"
-          placeholder="请确认密码"
-          maxlength="20"
-        />
+        <van-dialog
+          v-model:show="showCreatePwdDialog"
+          title="设置密码"
+          show-cancel-button
+          @confirm="handleCreatePwd"
+        >
+          <div class="dialog-body">
+            <van-field
+              v-model="newPwd"
+              type="password"
+              placeholder="请输入密码（至少4位）"
+              maxlength="20"
+            />
+            <van-field
+              v-model="confirmPwd"
+              type="password"
+              placeholder="请确认密码"
+              maxlength="20"
+            />
+          </div>
+        </van-dialog>
+
+        <van-dialog
+          v-model:show="showChangePwdDialog"
+          title="修改密码"
+          show-cancel-button
+          @confirm="handleChangePwd"
+        >
+          <div class="dialog-body">
+            <van-field
+              v-model="currentPwd"
+              type="password"
+              placeholder="请输入当前密码"
+              maxlength="20"
+            />
+            <van-field
+              v-model="changeNewPwd"
+              type="password"
+              placeholder="请输入新密码（至少4位）"
+              maxlength="20"
+            />
+            <van-field
+              v-model="changeConfirmPwd"
+              type="password"
+              placeholder="请确认新密码"
+              maxlength="20"
+            />
+          </div>
+        </van-dialog>
       </div>
-    </van-dialog>
-
-    <van-dialog
-      v-model:show="showChangePwdDialog"
-      title="修改密码"
-      show-cancel-button
-      @confirm="handleChangePwd"
-    >
-      <div class="dialog-body">
-        <van-field
-          v-model="currentPwd"
-          type="password"
-          placeholder="请输入当前密码"
-          maxlength="20"
-        />
-        <van-field
-          v-model="changeNewPwd"
-          type="password"
-          placeholder="请输入新密码（至少4位）"
-          maxlength="20"
-        />
-        <van-field
-          v-model="changeConfirmPwd"
-          type="password"
-          placeholder="请确认新密码"
-          maxlength="20"
-        />
-      </div>
-    </van-dialog>
   </div>
 </template>
 
 <style scoped>
 .settings-page {
-  padding: 16px;
-  padding-bottom: calc(var(--safe-bottom) + 16px);
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding-bottom: var(--safe-bottom);
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-white);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .page-title {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: 20px;
+}
+
+.settings-content {
+  padding: var(--spacing-lg);
 }
 
 .section-label {
