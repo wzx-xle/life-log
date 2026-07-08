@@ -101,8 +101,16 @@ const handleDelete = () => {
 .review-card {
   background: var(--color-bg-white);
   padding: var(--spacing-md) var(--spacing-lg);
-  border-bottom: 1px solid var(--color-border);
+  border: var(--border-thick);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hard);
+  margin: var(--spacing-sm) var(--spacing-lg);
   cursor: pointer;
+}
+
+.review-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-hard-sm);
 }
 
 .card-header {

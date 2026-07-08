@@ -151,8 +151,16 @@ onMounted(async () => {
   justify-content: space-between;
   padding: var(--spacing-md) var(--spacing-lg);
   background: var(--color-bg-white);
-  border-bottom: var(--border-thick);
+  border: var(--border-thick);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hard);
+  margin: var(--spacing-sm) var(--spacing-lg);
   cursor: pointer;
+}
+
+.place-item:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-hard-sm);
 }
 
 .place-left {
