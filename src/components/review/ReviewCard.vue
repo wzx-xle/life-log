@@ -3,8 +3,8 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { showConfirmDialog } from 'vant'
 import { useDatabase } from '@/composables/useDatabase'
-import type { Review, Place, Category } from '@/types'
-import { CATEGORY_COLORS } from '@/types'
+import { useCategoryDisplay } from '@/composables/useCategoryDisplay'
+import type { Review, Place } from '@/types'
 import RatingStar from './RatingStar.vue'
 
 defineOptions({ name: 'ReviewCard' })
@@ -15,14 +15,16 @@ const props = defineProps<{
 
 const router = useRouter()
 const { deleteReview } = useDatabase()
+const { getColor } = useCategoryDisplay()
 
 const emit = defineEmits<{
   deleted: [id: number]
 }>()
 
 const categoryColor = computed(() => {
-  const cat = props.review.place?.category as Category | undefined
-  return cat ? CATEGORY_COLORS[cat] : 'var(--color-text-light)'
+  const place = props.review.place
+  if (!place) return 'var(--color-text-light)'
+  return getColor(place)
 })
 
 const contentPreview = computed(() => {

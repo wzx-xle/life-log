@@ -2,12 +2,13 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePlaceStore } from '@/stores/usePlaceStore'
-import { CATEGORY_LABELS, CATEGORY_COLORS } from '@/types'
+import { useCategoryDisplay } from '@/composables/useCategoryDisplay'
 
 defineOptions({ name: 'PlaceListPage' })
 
 const router = useRouter()
 const store = usePlaceStore()
+const { loadCustomCategories, getLabel, getColor } = useCategoryDisplay()
 const loading = ref(true)
 
 const goToPlace = (id?: number) => {
@@ -19,7 +20,7 @@ const goToAddPlace = () => {
 }
 
 onMounted(async () => {
-  await store.fetchPlaces()
+  await Promise.all([store.fetchPlaces(), loadCustomCategories()])
   loading.value = false
 })
 </script>
@@ -43,11 +44,11 @@ onMounted(async () => {
         <div class="place-left">
           <span
             class="place-dot"
-            :style="{ backgroundColor: CATEGORY_COLORS[place.category] }"
+            :style="{ backgroundColor: getColor(place) }"
           ></span>
           <div class="place-info">
             <span class="place-name">{{ place.name }}</span>
-            <span class="place-category">{{ CATEGORY_LABELS[place.category] }}</span>
+            <span class="place-category">{{ getLabel(place) }}</span>
           </div>
         </div>
         <van-icon name="arrow" size="14" color="var(--color-text-light)" />

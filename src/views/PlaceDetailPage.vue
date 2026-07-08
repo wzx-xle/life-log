@@ -3,11 +3,13 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { Place, Review } from '@/types'
 import { useDatabase } from '@/composables/useDatabase'
+import { useCategoryDisplay } from '@/composables/useCategoryDisplay'
 import { showToast } from 'vant'
 
 const route = useRoute()
 const router = useRouter()
 const { getPlaceById, getReviewsByPlaceId, getPlaceReviewCount } = useDatabase()
+const { loadCustomCategories, getColor, getLabel } = useCategoryDisplay()
 
 const place = ref<Place | null>(null)
 const reviews = ref<Review[]>([])
@@ -15,27 +17,6 @@ const reviewCount = ref(0)
 const loading = ref(true)
 
 const placeId = computed(() => Number(route.params.id))
-
-const categoryLabels: Record<string, string> = {
-  restaurant: '餐饮',
-  hotel: '住宿',
-  retail: '零售',
-  service: '生活服务',
-  entertainment: '娱乐休闲',
-  custom: '自定义',
-}
-
-const categoryColors: Record<string, string> = {
-  restaurant: 'var(--color-restaurant)',
-  hotel: 'var(--color-hotel)',
-  retail: 'var(--color-retail)',
-  service: 'var(--color-service)',
-  entertainment: 'var(--color-entertainment)',
-  custom: 'var(--color-custom)',
-}
-
-const getCategoryColor = (cat: string) => categoryColors[cat] || 'var(--color-custom)'
-const getCategoryLabel = (cat: string) => categoryLabels[cat] || cat
 
 const averageRating = computed(() => {
   if (reviews.value.length === 0) return 0
@@ -66,6 +47,7 @@ const fetchData = async () => {
   const [revs, count] = await Promise.all([
     getReviewsByPlaceId(id),
     getPlaceReviewCount(id),
+    loadCustomCategories(),
   ])
   reviews.value = revs
   reviewCount.value = count
@@ -149,10 +131,10 @@ const goEditReview = (reviewId: number) => {
         <div
           v-else
           class="photo-placeholder"
-          :style="{ backgroundColor: getCategoryColor(place.category) }"
+          :style="{ backgroundColor: getColor(place) }"
         >
           <van-icon name="shop-o" size="48" color="#fff" />
-          <span class="placeholder-text">{{ getCategoryLabel(place.category) }}</span>
+          <span class="placeholder-text">{{ getLabel(place) }}</span>
         </div>
       </div>
 
@@ -160,9 +142,9 @@ const goEditReview = (reviewId: number) => {
         <h2 class="place-name">{{ place.name }}</h2>
         <span
           class="category-badge"
-          :style="{ backgroundColor: getCategoryColor(place.category) }"
+          :style="{ backgroundColor: getColor(place) }"
         >
-          {{ place.customCategory || getCategoryLabel(place.category) }}
+          {{ getLabel(place) }}
         </span>
       </div>
 

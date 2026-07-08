@@ -1,5 +1,5 @@
 import { db } from '@/db'
-import type { Place, Review } from '@/types'
+import type { Place, Review, CustomCategory } from '@/types'
 
 export function useDatabase() {
   const getAllPlaces = () => db.places.orderBy('updatedAt').reverse().toArray()
@@ -65,6 +65,26 @@ export function useDatabase() {
     return dist
   }
 
+  const getAllCustomCategories = () =>
+    db.customCategories.orderBy('createdAt').toArray()
+
+  const addCustomCategory = (cat: CustomCategory) => {
+    cat.createdAt = new Date()
+    return db.customCategories.add(cat)
+  }
+
+  const updateCustomCategory = (id: number, cat: Partial<CustomCategory>) =>
+    db.customCategories.update(id, cat)
+
+  const deleteCustomCategory = (id: number) =>
+    db.customCategories.delete(id)
+
+  const renameCustomCategoryInPlaces = (oldName: string, newName: string) =>
+    db.places
+      .where('customCategory')
+      .equals(oldName)
+      .modify({ customCategory: newName })
+
   return {
     getAllPlaces,
     getPlacesByCategory,
@@ -82,5 +102,10 @@ export function useDatabase() {
     getReviewCount,
     getTotalAmount,
     getRatingDistribution,
+    getAllCustomCategories,
+    addCustomCategory,
+    updateCustomCategory,
+    deleteCustomCategory,
+    renameCustomCategoryInPlaces,
   }
 }

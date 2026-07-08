@@ -3,26 +3,31 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDatabase } from '@/composables/useDatabase'
 import { usePlaceStore } from '@/stores/placeStore'
-import type { Review, Place, Category } from '@/types'
-import { CATEGORY_FILTER_LABELS, CATEGORY_LIST } from '@/types'
+import type { Review, Place, Category, CustomCategory } from '@/types'
+import { CATEGORY_LIST, LABEL_TO_CATEGORY_KEY } from '@/types'
 import ReviewCard from '@/components/review/ReviewCard.vue'
 
 defineOptions({ name: 'ReviewListPage' })
 
 const router = useRouter()
-const { getAllReviews } = useDatabase()
+const { getAllReviews, getAllCustomCategories } = useDatabase()
 const placeStore = usePlaceStore()
 
 const reviews = ref<(Review & { place?: Place })[]>([])
 const loading = ref(true)
 const searchKeyword = ref('')
-const activeCategory = ref<Category | 'all'>('all')
+const activeCategory = ref<string>('all')
 const sortBy = ref<'time' | 'rating'>('time')
+const customCats = ref<CustomCategory[]>([])
 
-const categoryTabs = CATEGORY_LIST.map((cat) => ({
-  key: cat,
-  label: CATEGORY_FILTER_LABELS[cat],
-}))
+const categoryTabs = computed(() => {
+  const tabs: { key: string; label: string }[] = [{ key: 'all', label: '全部' }]
+  customCats.value.forEach((c) => {
+    const presetKey = LABEL_TO_CATEGORY_KEY[c.name]
+    tabs.push({ key: presetKey ?? c.name, label: c.name })
+  })
+  return tabs
+})
 
 const filteredReviews = computed(() => {
   let result = [...reviews.value]
@@ -37,7 +42,15 @@ const filteredReviews = computed(() => {
   }
 
   if (activeCategory.value !== 'all') {
-    result = result.filter((r) => r.place?.category === activeCategory.value)
+    const cat = activeCategory.value
+    const isPreset = CATEGORY_LIST.includes(cat as Category | 'all')
+    if (isPreset) {
+      result = result.filter((r) => r.place?.category === cat)
+    } else {
+      result = result.filter(
+        (r) => r.place?.category === 'custom' && r.place?.customCategory === cat
+      )
+    }
   }
 
   if (sortBy.value === 'rating') {
@@ -96,8 +109,12 @@ const loadData = async () => {
   loading.value = true
   try {
     await placeStore.fetchPlaces()
-    const allReviews = await getAllReviews()
+    const [allReviews, cats] = await Promise.all([
+      getAllReviews(),
+      getAllCustomCategories(),
+    ])
     reviews.value = mapPlacesToReviews(allReviews)
+    customCats.value = cats
   } finally {
     loading.value = false
   }
@@ -131,7 +148,7 @@ onMounted(() => {
           v-for="tab in categoryTabs"
           :key="tab.key"
           :class="['filter-tab', { active: activeCategory === tab.key }]"
-          @click="activeCategory = tab.key as Category | 'all'"
+          @click="activeCategory = tab.key"
         >{{ tab.label }}</span>
       </div>
       <div class="sort-toggle" @click="sortBy = sortBy === 'time' ? 'rating' : 'time'">

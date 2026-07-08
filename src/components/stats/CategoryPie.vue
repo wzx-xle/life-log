@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import * as echarts from 'echarts'
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
-import type { Review, Place } from '@/types'
+import type { Review, Place, Category, CustomCategory } from '@/types'
+import { CATEGORY_LABELS, CATEGORY_COLORS } from '@/types'
+import { useDatabase } from '@/composables/useDatabase'
 
 const props = defineProps<{
   reviews: Review[]
@@ -12,28 +14,28 @@ const emit = defineEmits<{
   (e: 'drilldown', category: string): void
 }>()
 
-const CATEGORY_LABELS: Record<string, string> = {
-  restaurant: '餐饮',
-  hotel: '住宿',
-  retail: '购物',
-  service: '服务',
-  entertainment: '娱乐',
-  custom: '自定义',
-}
-
-const CATEGORY_COLORS: Record<string, string> = {
-  restaurant: '#FF6B35',
-  hotel: '#4A90D9',
-  retail: '#52C41A',
-  service: '#8B5CF6',
-  entertainment: '#F5A623',
-  custom: '#9E9E9E',
-}
+const { getAllCustomCategories } = useDatabase()
 
 const chartRef = ref<HTMLElement>()
+const customCategories = ref<CustomCategory[]>([])
 let chartInstance: echarts.ECharts | null = null
 
-function getCategoryData() {
+function getDisplayLabel(key: string): string {
+  return CATEGORY_LABELS[key as Category] || key
+}
+
+function getColor(key: string): string {
+  const label = getDisplayLabel(key)
+  const cached = customCategories.value.find((c) => c.name === label)
+  if (cached) return cached.color
+  return CATEGORY_COLORS[key as Category] || '#9E9E9E'
+}
+
+async function getCategoryData() {
+  if (customCategories.value.length === 0) {
+    customCategories.value = await getAllCustomCategories()
+  }
+
   const placeMap = new Map<number, Place>()
   props.places.forEach((p) => {
     if (p.id !== undefined) placeMap.set(p.id, p)
@@ -43,26 +45,28 @@ function getCategoryData() {
   props.reviews.forEach((r) => {
     const place = placeMap.get(r.placeId)
     const cat = place?.category || 'custom'
-    if (!categoryAmounts[cat]) categoryAmounts[cat] = 0
-    categoryAmounts[cat] += r.amount || 0
+    const customName = place?.customCategory
+    const key = cat === 'custom' && customName ? customName : cat
+    if (!categoryAmounts[key]) categoryAmounts[key] = 0
+    categoryAmounts[key] += r.amount || 0
   })
 
   return Object.entries(categoryAmounts)
     .filter(([, amount]) => amount > 0)
-    .map(([cat, amount]) => ({
-      name: CATEGORY_LABELS[cat] || cat,
+    .map(([key, amount]) => ({
+      name: getDisplayLabel(key),
       value: Math.round(amount * 100) / 100,
-      category: cat,
-      itemStyle: { color: CATEGORY_COLORS[cat] || '#9E9E9E' },
+      category: key,
+      itemStyle: { color: getColor(key) },
     }))
 }
 
-function renderChart() {
+async function renderChart() {
   if (!chartRef.value) return
   if (chartInstance) chartInstance.dispose()
 
   chartInstance = echarts.init(chartRef.value)
-  const data = getCategoryData()
+  const data = await getCategoryData()
 
   if (data.length === 0) {
     chartInstance.setOption({

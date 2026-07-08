@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { showToast, showConfirmDialog } from 'vant'
 import { useLock } from '@/composables/useLock'
+
+const router = useRouter()
 
 const { createPassword, changePassword, resetPassword, isPasswordSet } = useLock()
 
@@ -147,6 +150,7 @@ function onAutoLockConfirm({ selectedOptions }: any) {
 
     <div class="section-label">数据管理</div>
     <van-cell-group inset>
+      <van-cell title="分类管理" is-link @click="router.push({ name: 'categoryManage' })" />
       <van-cell title="导出数据" is-link @click="$emit('export')" />
       <van-cell title="导入数据" is-link @click="$emit('import')" />
     </van-cell-group>

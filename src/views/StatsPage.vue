@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDatabase } from '@/composables/useDatabase'
+import { useCategoryDisplay } from '@/composables/useCategoryDisplay'
 import TrendChart from '@/components/stats/TrendChart.vue'
 import CategoryPie from '@/components/stats/CategoryPie.vue'
 import RatingBar from '@/components/stats/RatingBar.vue'
@@ -9,19 +10,11 @@ import type { Place, Review } from '@/types'
 
 const router = useRouter()
 const db = useDatabase()
+const { loadCustomCategories, getLabel } = useCategoryDisplay()
 
 const reviews = ref<Review[]>([])
 const places = ref<Place[]>([])
 const loading = ref(true)
-
-const CATEGORY_LABELS: Record<string, string> = {
-  restaurant: '餐饮',
-  hotel: '住宿',
-  retail: '购物',
-  service: '服务',
-  entertainment: '娱乐',
-  custom: '自定义',
-}
 
 const totalReviews = computed(() => reviews.value.length)
 const totalAmount = computed(() => reviews.value.reduce((s, r) => s + (r.amount || 0), 0))
@@ -51,7 +44,11 @@ const topVenues = computed(() => {
 
 async function loadData() {
   loading.value = true
-  const [allReviews, allPlaces] = await Promise.all([db.getAllReviews(), db.getAllPlaces()])
+  const [allReviews, allPlaces] = await Promise.all([
+    db.getAllReviews(),
+    db.getAllPlaces(),
+    loadCustomCategories(),
+  ])
   reviews.value = allReviews
   places.value = allPlaces
   loading.value = false
@@ -63,10 +60,6 @@ function goToPlace(placeId?: number) {
 
 function goToMap() {
   router.push({ name: 'reviews' })
-}
-
-function getCategoryLabel(cat: string): string {
-  return CATEGORY_LABELS[cat] || cat
 }
 
 onMounted(loadData)
@@ -116,7 +109,7 @@ onMounted(loadData)
           v-for="(item, index) in topVenues"
           :key="item.place.id"
           :title="item.place.name"
-          :label="`${getCategoryLabel(item.place.category)} · 到访 ${item.count} 次`"
+          :label="`${getLabel(item.place)} · 到访 ${item.count} 次`"
           is-link
           @click="goToPlace(item.place.id!)"
         >

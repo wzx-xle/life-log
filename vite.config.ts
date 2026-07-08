@@ -97,7 +97,7 @@ export default defineConfig({
           selectorBlackList: [],
           minPixelValue: 1,
           mediaQuery: false,
-          exclude: [],
+          exclude: [/node_modules/],
         }),
       ],
     },

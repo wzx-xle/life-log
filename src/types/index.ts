@@ -30,6 +30,23 @@ export const CATEGORY_FILTER_LABELS: Record<Category | 'all', string> = {
   custom: '自定义',
 }
 
+export const LABEL_TO_CATEGORY_KEY: Record<string, Category> = {
+  '餐饮': 'restaurant',
+  '住宿': 'hotel',
+  '零售': 'retail',
+  '生活服务': 'service',
+  '娱乐休闲': 'entertainment',
+  '自定义': 'custom',
+}
+
+export interface CustomCategory {
+  id?: number
+  name: string
+  color: string
+  createdAt: Date
+  isPreset?: boolean
+}
+
 export interface Place {
   id?: number
   name: string

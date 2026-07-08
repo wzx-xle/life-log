@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { Place } from '@/types'
-import { CATEGORY_MARKER_COLORS } from '@/composables/useMap'
+import { useCategoryDisplay } from '@/composables/useCategoryDisplay'
 
-const props = defineProps<{
+const { getLabel, getColor } = useCategoryDisplay()
+
+defineProps<{
   place: Place
   averageRating: number
 }>()
@@ -12,17 +14,6 @@ const emit = defineEmits<{
   viewDetail: [place: Place]
   close: []
 }>()
-
-const categoryColor = CATEGORY_MARKER_COLORS[props.place.category]
-
-const categoryLabels: Record<string, string> = {
-  restaurant: '餐饮',
-  hotel: '酒店',
-  retail: '零售',
-  service: '服务',
-  entertainment: '娱乐',
-  custom: '自定义',
-}
 
 const starArray = Array.from({ length: 5 }, (_, i) => i + 1)
 </script>
@@ -49,8 +40,8 @@ const starArray = Array.from({ length: 5 }, (_, i) => i + 1)
       </div>
 
       <div class="info-row">
-        <span class="category-tag" :style="{ background: categoryColor }">
-          {{ categoryLabels[place.category] || place.category }}
+        <span class="category-tag" :style="{ background: getColor(place) }">
+          {{ getLabel(place) }}
         </span>
         <span class="address">{{ place.address }}</span>
       </div>

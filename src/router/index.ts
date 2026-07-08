@@ -61,6 +61,11 @@ const routes = [
     meta: { tabBar: true },
     component: () => import('@/views/SettingsPage.vue'),
   },
+  {
+    path: '/settings/categories',
+    name: 'categoryManage',
+    component: () => import('@/views/CategoryManagePage.vue'),
+  },
 ]
 
 const router = createRouter({

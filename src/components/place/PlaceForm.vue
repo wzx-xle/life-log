@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
-import type { Place, Category } from '@/types'
+import { ref, reactive, computed, onMounted } from 'vue'
+import type { Place, Category, CustomCategory } from '@/types'
+import { LABEL_TO_CATEGORY_KEY } from '@/types'
 import type { UploaderFileListItem } from 'vant'
 import Compressor from 'compressorjs'
 import { showToast } from 'vant'
+import { useDatabase } from '@/composables/useDatabase'
 
 export interface PlaceFormData {
   name: string
@@ -31,15 +33,43 @@ const emit = defineEmits<{
 }>()
 
 const isEdit = computed(() => !!props.place)
+const { getAllCustomCategories } = useDatabase()
+const customCategories = ref<CustomCategory[]>([])
 
-const categoryOptions: { value: Category; label: string; color: string }[] = [
-  { value: 'restaurant', label: '餐饮', color: 'var(--color-restaurant)' },
-  { value: 'hotel', label: '住宿', color: 'var(--color-hotel)' },
-  { value: 'retail', label: '零售', color: 'var(--color-retail)' },
-  { value: 'service', label: '生活服务', color: 'var(--color-service)' },
-  { value: 'entertainment', label: '娱乐休闲', color: 'var(--color-entertainment)' },
-  { value: 'custom', label: '自定义', color: 'var(--color-custom)' },
-]
+interface CategoryOption { value: Category; label: string; color: string }
+
+const allCategoryItems = computed<CategoryOption[]>(() =>
+  customCategories.value.map((c): CategoryOption => {
+    const presetKey = LABEL_TO_CATEGORY_KEY[c.name]
+    return {
+      value: presetKey ?? 'custom',
+      label: c.name,
+      color: c.color,
+    }
+  })
+)
+
+function isCategoryActive(opt: CategoryOption): boolean {
+  if (opt.value === 'custom') {
+    if (form.category !== 'custom') return false
+    return form.customCategory === opt.label || (!form.customCategory && opt.label === '自定义')
+  }
+  return form.category === opt.value && !form.customCategory
+}
+
+function selectCategory(opt: CategoryOption) {
+  if (opt.value === 'custom') {
+    form.category = 'custom'
+    form.customCategory = opt.label === '自定义' ? '' : opt.label
+  } else {
+    form.category = opt.value
+    form.customCategory = ''
+  }
+}
+
+onMounted(async () => {
+  customCategories.value = await getAllCustomCategories()
+})
 
 const form = reactive<PlaceFormData>({
   name: props.place?.name || '',
@@ -185,10 +215,10 @@ defineExpose({ form })
       </div>
       <div class="category-grid">
         <div
-          v-for="opt in categoryOptions"
-          :key="opt.value"
-          :class="['category-item', { active: form.category === opt.value }]"
-          @click="form.category = opt.value"
+          v-for="(opt, idx) in allCategoryItems"
+          :key="opt.value + '-' + idx"
+          :class="['category-item', { active: isCategoryActive(opt) }]"
+          @click="selectCategory(opt)"
         >
           <span class="category-dot" :style="{ backgroundColor: opt.color }"></span>
           <span class="category-label">{{ opt.label }}</span>

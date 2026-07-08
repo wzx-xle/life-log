@@ -68,3 +68,18 @@ button {
 .safe-top {
   padding-top: var(--safe-top);
 }
+
+/* Vant Toast 修复 */
+.van-toast {
+  color: #fff !important;
+  font-size: 14px !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+.van-toast--text,
+.van-toast--html {
+  min-height: auto !important;
+  padding: 8px 12px !important;
+}
+.van-toast__text {
+  line-height: 1.4 !important;
+}

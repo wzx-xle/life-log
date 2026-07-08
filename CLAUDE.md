@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run dev          # 开发服务器 (vite)
 npm run build        # 类型检查 + 构建 (vue-tsc → vite build)
 npm run typecheck    # 仅类型检查
+npm run test         # 运行单元测试 (vitest)
+npm run test:watch   # 监听模式运行测试
 npm run deploy       # 构建 + FTP上传到服务器
 ```
 
