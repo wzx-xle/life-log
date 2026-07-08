@@ -124,8 +124,6 @@ const form = reactive<PlaceFormData>({
   photos: [...(props.place?.photos || [])],
 })
 
-const showCustomCategory = computed(() => form.category === 'custom')
-
 const tagInputValue = ref('')
 const tagInputVisible = ref(false)
 const tagInputRef = ref<HTMLInputElement>()
@@ -220,10 +218,6 @@ const validate = (): boolean => {
     showToast('请输入店铺地址')
     return false
   }
-  if (showCustomCategory.value && !form.customCategory.trim()) {
-    showToast('请输入自定义分类')
-    return false
-  }
   return true
 }
 
@@ -268,14 +262,6 @@ defineExpose({ form })
         </div>
       </div>
     </div>
-
-    <van-field
-      v-if="showCustomCategory"
-      v-model="form.customCategory"
-      label="自定义分类"
-      placeholder="请输入自定义分类名称"
-      required
-    />
 
     <van-field
       v-model="form.address"
