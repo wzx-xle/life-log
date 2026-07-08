@@ -11,7 +11,7 @@ import { showToast, showConfirmDialog } from 'vant'
 
 const route = useRoute()
 const router = useRouter()
-const { getPlaceById, updatePlace, deletePlace, getPlaceReviewCount } = useDatabase()
+const { getPlaceById, deletePlace, getPlaceReviewCount } = useDatabase()
 const store = usePlaceStore()
 
 const place = ref<Place | null>(null)
@@ -60,9 +60,7 @@ const onSubmit = async (data: PlaceFormData) => {
     updatedAt: new Date(),
   }
   try {
-    await updatePlace(place.value.id, updates)
-    const updated = { ...place.value, ...updates }
-    store.updatePlace(updated)
+    await store.updatePlace({ ...place.value, ...updates })
     showToast('保存成功')
     router.push({ name: 'placeDetail', params: { id: place.value.id } })
   } catch {

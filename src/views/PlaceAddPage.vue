@@ -2,7 +2,6 @@
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { Place, Category } from '@/types'
-import { useDatabase } from '@/composables/useDatabase'
 import { usePlaceStore } from '@/stores/usePlaceStore'
 import { mapPickResult } from '@/composables/mapPickState'
 import PlaceForm from '@/components/place/PlaceForm.vue'
@@ -11,7 +10,6 @@ import { showToast } from 'vant'
 
 const route = useRoute()
 const router = useRouter()
-const { addPlace: dbAddPlace } = useDatabase()
 const store = usePlaceStore()
 
 const prefillQuery = computed(() => {
@@ -53,9 +51,7 @@ const onSubmit = async (data: PlaceFormData) => {
   } as Place
 
   try {
-    const id = await dbAddPlace(place)
-    place.id = id as number
-    store.addPlace(place)
+    await store.addPlace(place)
     showToast('添加成功')
     setTimeout(() => router.back(), 300)
   } catch (err: any) {
