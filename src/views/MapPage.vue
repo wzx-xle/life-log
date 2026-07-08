@@ -297,7 +297,7 @@ watch(
 
 .search-bar :deep(.van-search__content) {
   background: var(--color-bg-white);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-hard);
 }
 
 .map-container {
@@ -315,8 +315,9 @@ watch(
   align-items: center;
   justify-content: center;
   background: var(--color-bg-white);
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hard);
+  border: var(--border-thick);
   z-index: 150;
   color: var(--color-text);
 }

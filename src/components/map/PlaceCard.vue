@@ -65,8 +65,9 @@ const starArray = Array.from({ length: 5 }, (_, i) => i + 1)
   left: 12px;
   right: 12px;
   background: var(--color-bg-white);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.12);
+  border-radius: var(--radius-md);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-hard);
   padding: var(--spacing-lg);
   z-index: 200;
   animation: slideUp 0.25s ease-out;
@@ -104,7 +105,7 @@ const starArray = Array.from({ length: 5 }, (_, i) => i + 1)
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: var(--radius-md);
   color: var(--color-text-secondary);
   flex-shrink: 0;
 }

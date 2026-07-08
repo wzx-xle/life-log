@@ -152,17 +152,19 @@ const remainingErrors = computed(() => MAX_ERRORS - errorCount.value)
 .lock-icon {
   width: 64px;
   height: 64px;
-  border-radius: 50%;
-  background: rgba(255, 107, 53, 0.1);
+  border-radius: var(--radius-md);
+  border: var(--border-thick);
+  background: var(--color-bg-white);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .lock-title {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-xxl);
   color: var(--color-text);
-  font-weight: 600;
+  font-weight: 700;
+  font-family: "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
 }
 
 .dots-row {
