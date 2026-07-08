@@ -218,12 +218,7 @@ onMounted(() => {
   margin-top: var(--spacing-xl);
 }
 
-.form-actions :deep(.van-button--primary) {
-  box-shadow: var(--shadow-hard);
 }
 
-.form-actions :deep(.van-button--primary:active) {
-  transform: translate(2px, 2px);
-  box-shadow: var(--shadow-hard-sm);
 }
 </style>

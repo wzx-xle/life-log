@@ -278,7 +278,7 @@ watch(
 .map-page {
   position: relative;
   width: 100%;
-  height: calc(100vh - 56px);
+  height: calc(100vh - 50px);
   overflow: hidden;
 }
 
@@ -297,7 +297,7 @@ watch(
 
 .search-bar :deep(.van-search__content) {
   background: var(--color-bg-white);
-  box-shadow: var(--shadow-hard);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .map-container {
@@ -316,8 +316,8 @@ watch(
   justify-content: center;
   background: var(--color-bg-white);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-hard);
-  border: var(--border-thick);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--color-border);
   z-index: 150;
   color: var(--color-text);
 }

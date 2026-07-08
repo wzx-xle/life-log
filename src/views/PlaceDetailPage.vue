@@ -277,7 +277,7 @@ const goEditReview = (reviewId: number) => {
   top: 0;
   z-index: 10;
   background: var(--color-bg-white);
-  border-bottom: var(--border-thick);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .loading-center {
@@ -515,7 +515,7 @@ const goEditReview = (reviewId: number) => {
   gap: var(--spacing-md);
   padding: var(--spacing-md) var(--spacing-lg);
   background: var(--color-bg-white);
-  border-top: var(--border-thick);
+  border-top: 1px solid var(--color-border);
   z-index: 50;
 }
 

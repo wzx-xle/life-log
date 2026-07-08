@@ -144,7 +144,7 @@ onMounted(loadData)
   align-items: center;
   padding: var(--spacing-lg);
   background: var(--color-bg-white);
-  border-bottom: var(--border-thick);
+  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -154,7 +154,6 @@ onMounted(loadData)
   font-size: var(--font-size-lg);
   font-weight: 600;
   color: var(--color-text);
-  font-family: "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
 }
 
 .stats-content {
@@ -176,13 +175,12 @@ onMounted(loadData)
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  border: var(--border-thick);
-  box-shadow: var(--shadow-hard);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .summary-value {
   font-size: var(--font-size-xl);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--color-primary);
   white-space: nowrap;
 }
@@ -203,8 +201,7 @@ onMounted(loadData)
   border-radius: var(--radius-md);
   padding: 16px;
   margin-bottom: 12px;
-  border: var(--border-thick);
-  box-shadow: var(--shadow-hard);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .section-title {

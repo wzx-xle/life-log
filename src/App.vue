@@ -17,7 +17,7 @@ import TabBar from '@/components/common/TabBar.vue'
 .app-root {
   width: 100%;
   min-height: 100vh;
-  padding-bottom: 56px;
+  padding-bottom: 50px;
 }
 
 .page-slide-enter-active,

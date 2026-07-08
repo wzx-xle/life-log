@@ -218,7 +218,7 @@ onUnmounted(() => {
   gap: var(--spacing-md);
   padding: var(--spacing-md) var(--spacing-lg);
   background: var(--color-bg-white);
-  border-top: var(--border-thick);
+  border-top: 1px solid var(--color-border);
   flex-shrink: 0;
 }
 

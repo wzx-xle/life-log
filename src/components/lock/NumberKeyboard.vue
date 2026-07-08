@@ -110,7 +110,6 @@ function handleKey(key: Key) {
   color: var(--color-text);
   font-size: 24px;
   font-weight: 500;
-  border: var(--border-thick);
 }
 
 .key--number:active {

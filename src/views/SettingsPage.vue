@@ -239,7 +239,7 @@ function onAutoLockConfirm({ selectedOptions }: any) {
   align-items: center;
   padding: var(--spacing-lg);
   background: var(--color-bg-white);
-  border-bottom: var(--border-thick);
+  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -249,7 +249,6 @@ function onAutoLockConfirm({ selectedOptions }: any) {
   font-size: var(--font-size-lg);
   font-weight: 600;
   color: var(--color-text);
-  font-family: "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
 }
 
 .settings-content {

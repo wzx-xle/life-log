@@ -482,7 +482,7 @@ onMounted(async () => {
   color: var(--color-text);
   text-align: center;
   padding: var(--spacing-lg);
-  border-bottom: var(--border-thick);
+  border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
 }
 
@@ -544,7 +544,7 @@ onMounted(async () => {
 .picker-footer {
   padding: var(--spacing-md) var(--spacing-lg);
   padding-bottom: calc(var(--spacing-md) + var(--safe-bottom));
-  border-top: var(--border-thick);
+  border-top: 1px solid var(--color-border);
   flex-shrink: 0;
 }
 </style>
