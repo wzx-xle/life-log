@@ -483,7 +483,7 @@ onMounted(async () => {
   color: var(--color-text);
   text-align: center;
   padding: var(--spacing-lg);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: var(--border-thick);
   flex-shrink: 0;
 }
 
@@ -513,6 +513,7 @@ onMounted(async () => {
   color: var(--color-primary);
   background: var(--color-bg-white);
   border-left-color: var(--color-primary);
+  font-weight: 700;
 }
 
 .picker-right {
@@ -550,7 +551,7 @@ onMounted(async () => {
 .picker-footer {
   padding: var(--spacing-md) var(--spacing-lg);
   padding-bottom: calc(var(--spacing-md) + var(--safe-bottom));
-  border-top: 1px solid var(--color-border);
+  border-top: var(--border-thick);
   flex-shrink: 0;
 }
 </style>

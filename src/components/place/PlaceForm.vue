@@ -422,6 +422,7 @@ defineExpose({ form })
   gap: 6px;
   padding: var(--spacing-md) var(--spacing-sm);
   border-radius: var(--radius-md);
+  border: var(--border-thick);
   background: var(--color-bg);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
@@ -431,6 +432,7 @@ defineExpose({ form })
 .category-item.active {
   background: var(--color-primary);
   color: #fff;
+  box-shadow: var(--shadow-hard-sm);
 }
 
 .category-item.active .category-dot {
