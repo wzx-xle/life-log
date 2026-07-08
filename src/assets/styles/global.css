@@ -20,8 +20,6 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
-  letter-spacing: -0.01em;
-  line-height: 1.5;
 }
 
 a {
@@ -71,14 +69,11 @@ button {
   padding-top: var(--safe-top);
 }
 
-/* Vant Toast — 粗野主义白底黑字硬阴影 */
+/* Vant Toast 修复 */
 .van-toast {
-  color: var(--color-text) !important;
+  color: #fff !important;
   font-size: 14px !important;
-  background: var(--color-bg-white) !important;
-  border: var(--border-thick) !important;
-  box-shadow: var(--shadow-hard) !important;
-  border-radius: var(--radius-md) !important;
+  background: rgba(0, 0, 0, 0.7) !important;
 }
 .van-toast--text,
 .van-toast--html {
@@ -87,15 +82,4 @@ button {
 }
 .van-toast__text {
   line-height: 1.4 !important;
-}
-
-/* Vant 全局变量覆盖 — 粗野主义方角 + 粗边框 */
-:root {
-  --van-button-radius: var(--radius-md);
-  --van-button-default-height: 44px;
-  --van-tag-radius: var(--radius-md);
-  --van-dialog-radius: var(--radius-md);
-  --van-dialog-border: var(--border-thick);
-  --van-popup-round-radius: var(--radius-lg);
-  --van-field-border-width: 2px;
 }
