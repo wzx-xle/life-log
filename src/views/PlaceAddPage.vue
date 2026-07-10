@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { Place, Category } from '@/types'
 import { usePlaceStore } from '@/stores/usePlaceStore'
@@ -30,15 +30,22 @@ const prefillQuery = computed(() => {
 
 const placeFormRef = ref<InstanceType<typeof PlaceForm>>()
 
-watch(mapPickResult, (val) => {
-  if (val && placeFormRef.value) {
-    const form = placeFormRef.value.form
-    form.lat = val.lat
-    form.lng = val.lng
-    form.address = val.address || ''
-    mapPickResult.value = null
-  }
-})
+const applyPickResult = async (val: { lat: number; lng: number; address: string } | null) => {
+  if (!val) return
+  await nextTick()
+  if (!placeFormRef.value) return
+  const form = placeFormRef.value.form
+  form.lat = val.lat
+  form.lng = val.lng
+  form.address = val.address || ''
+  mapPickResult.value = null
+}
+
+watch(mapPickResult, applyPickResult)
+
+// 应用无 keep-alive：从选点页返回时本页重新挂载，watch 会错过已写入的共享结果，
+// 故挂载时主动应用一次。
+onMounted(() => applyPickResult(mapPickResult.value))
 
 const onSubmit = async (data: PlaceFormData) => {
   const place = {

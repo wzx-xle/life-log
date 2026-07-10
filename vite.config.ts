@@ -104,6 +104,20 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 550,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            // echarts 体积大、仅统计页用，独立且保持懒加载
+            if (id.includes('echarts') || id.includes('zrender')) return 'echarts'
+            // compressorjs 仅表单页用，独立保持懒加载
+            if (id.includes('compressorjs')) return 'compressor'
+            // 其余依赖（vue / vant / pinia / dexie 及 Vant 各组件小 chunk）合并为单一 vendor
+            return 'vendor'
+          }
+        },
+      },
+    },
   },
   base: '/',
 })

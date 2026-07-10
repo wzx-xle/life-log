@@ -3,23 +3,49 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast, showConfirmDialog } from 'vant'
 import { useLock } from '@/composables/useLock'
+import { useExport } from '@/utils/exportData'
+import { useImport } from '@/utils/importData'
+import PinInputPopup from '@/components/lock/PinInputPopup.vue'
 
 const router = useRouter()
 
 const { createPassword, changePassword, resetPassword, isPasswordSet } = useLock()
+const { downloadExport } = useExport()
+const { validateFormat, importMerge, importOverwrite } = useImport()
 
 const pwdEnabled = ref(localStorage.getItem('pwd_enabled') === 'true')
 const autoLockMinutes = ref(Number(localStorage.getItem('auto_lock_minutes') || '5'))
 
 const showAutoLockPicker = ref(false)
-const showCreatePwdDialog = ref(false)
-const showChangePwdDialog = ref(false)
 
-const newPwd = ref('')
-const confirmPwd = ref('')
-const currentPwd = ref('')
-const changeNewPwd = ref('')
-const changeConfirmPwd = ref('')
+// 密码 4 位 PIN 录入状态机（创建/修改共用一个弹窗，体验与解锁界面一致）
+const showPinPopup = ref(false)
+const pinMode = ref<'create' | 'change'>('create')
+const pinStep = ref<'current' | 'new' | 'confirm'>('new')
+const pinTitle = ref('')
+const pinSubtitle = ref('')
+const pinError = ref('')
+let firstPin = ''
+let currentPinInput = ''
+
+const stepTexts = {
+  create: {
+    new: { title: '设置密码', subtitle: '输入 4 位数字密码' },
+    confirm: { title: '确认密码', subtitle: '再次输入以确认' },
+  },
+  change: {
+    current: { title: '当前密码', subtitle: '输入当前 4 位密码' },
+    new: { title: '新密码', subtitle: '输入 4 位数字新密码' },
+    confirm: { title: '确认新密码', subtitle: '再次输入新密码' },
+  },
+} as const
+
+function setPinStep(step: 'current' | 'new' | 'confirm') {
+  pinStep.value = step
+  const texts = (stepTexts[pinMode.value] as Record<string, { title: string; subtitle: string }>)[step]
+  pinTitle.value = texts.title
+  pinSubtitle.value = texts.subtitle
+}
 
 const autoLockOptions = [
   { text: '立即', value: 0 },
@@ -35,9 +61,11 @@ const autoLockText = computed(() => {
 
 async function onPwdToggle(val: boolean) {
   if (val) {
-    newPwd.value = ''
-    confirmPwd.value = ''
-    showCreatePwdDialog.value = true
+    pinMode.value = 'create'
+    firstPin = ''
+    pinError.value = ''
+    setPinStep('new')
+    showPinPopup.value = true
   } else {
     try {
       await showConfirmDialog({
@@ -55,53 +83,77 @@ async function onPwdToggle(val: boolean) {
   }
 }
 
-async function handleCreatePwd() {
-  if (!newPwd.value || newPwd.value.length < 4) {
-    showToast('密码至少4位')
-    return
-  }
-  if (newPwd.value !== confirmPwd.value) {
-    showToast('两次密码不一致')
-    return
-  }
-  await createPassword(newPwd.value)
-  pwdEnabled.value = true
-  showCreatePwdDialog.value = false
-  showToast('密码设置成功')
-}
-
 function openChangePwd() {
-  currentPwd.value = ''
-  changeNewPwd.value = ''
-  changeConfirmPwd.value = ''
-  showChangePwdDialog.value = true
+  pinMode.value = 'change'
+  firstPin = ''
+  currentPinInput = ''
+  pinError.value = ''
+  setPinStep('current')
+  showPinPopup.value = true
 }
 
-async function handleChangePwd() {
-  if (!currentPwd.value) {
-    showToast('请输入当前密码')
+async function onPinComplete(pin: string) {
+  pinError.value = ''
+  if (pinMode.value === 'create') {
+    if (pinStep.value === 'new') {
+      firstPin = pin
+      setPinStep('confirm')
+      return
+    }
+    // confirm
+    if (pin !== firstPin) {
+      pinError.value = '两次密码不一致，请重新输入'
+      firstPin = ''
+      setPinStep('new')
+      return
+    }
+    await createPassword(pin)
+    pwdEnabled.value = true
+    showPinPopup.value = false
+    showToast('密码设置成功')
     return
   }
-  if (!changeNewPwd.value || changeNewPwd.value.length < 4) {
-    showToast('新密码至少4位')
+
+  // change
+  if (pinStep.value === 'current') {
+    currentPinInput = pin
+    setPinStep('new')
     return
   }
-  if (changeNewPwd.value !== changeConfirmPwd.value) {
-    showToast('两次密码不一致')
+  if (pinStep.value === 'new') {
+    firstPin = pin
+    setPinStep('confirm')
     return
   }
-  const ok = await changePassword(currentPwd.value, changeNewPwd.value)
+  // confirm
+  if (pin !== firstPin) {
+    pinError.value = '两次密码不一致，请重新输入'
+    firstPin = ''
+    setPinStep('new')
+    return
+  }
+  const ok = await changePassword(currentPinInput, firstPin)
   if (ok) {
-    showChangePwdDialog.value = false
+    showPinPopup.value = false
     showToast('密码修改成功')
   } else {
-    showToast('当前密码错误')
+    pinError.value = '当前密码错误'
+    currentPinInput = ''
+    firstPin = ''
+    setPinStep('current')
   }
 }
 
 async function handleResetPwd() {
-  await resetPassword()
-  pwdEnabled.value = false
+  const ok = await resetPassword()
+  if (ok) pwdEnabled.value = false
+}
+
+const autoLockPickerValue = ref<number[]>([autoLockMinutes.value])
+
+function openAutoLockPicker() {
+  autoLockPickerValue.value = [autoLockMinutes.value]
+  showAutoLockPicker.value = true
 }
 
 function onAutoLockConfirm({ selectedOptions }: any) {
@@ -109,6 +161,73 @@ function onAutoLockConfirm({ selectedOptions }: any) {
   autoLockMinutes.value = val
   localStorage.setItem('auto_lock_minutes', String(val))
   showAutoLockPicker.value = false
+}
+
+const fileInput = ref<HTMLInputElement>()
+const showImportSheet = ref(false)
+let pendingImport: Awaited<ReturnType<typeof parseImportFile>> | null = null
+const importActions = [
+  { name: '合并导入（保留现有数据）' },
+  { name: '覆盖导入（清空后导入）' },
+]
+
+async function handleExport() {
+  try {
+    await downloadExport()
+  } catch {
+    showToast('导出失败')
+  }
+}
+
+function handleImport() {
+  fileInput.value?.click()
+}
+
+async function parseImportFile(file: File) {
+  const text = await file.text()
+  const data = JSON.parse(text)
+  return validateFormat(data) ? data : null
+}
+
+async function onFileChange(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  try {
+    const data = await parseImportFile(file)
+    if (!data) {
+      showToast('文件格式错误')
+      return
+    }
+    pendingImport = data
+    showImportSheet.value = true
+  } catch {
+    showToast('文件解析失败')
+  } finally {
+    input.value = ''
+  }
+}
+
+async function onImportSelect(_action: { name: string }, index: number) {
+  showImportSheet.value = false
+  if (!pendingImport) return
+  const data = pendingImport
+  pendingImport = null
+  try {
+    if (index === 1) {
+      await showConfirmDialog({
+        title: '覆盖导入',
+        message: '将清空现有全部店铺与记录后导入，此操作不可恢复，确定继续吗？',
+      })
+      const result = await importOverwrite(data)
+      showToast(`导入成功：${result.placesCount} 个店铺，${result.reviewsCount} 条记录`)
+    } else {
+      const result = await importMerge(data)
+      showToast(`导入成功：${result.placesCount} 个店铺，${result.reviewsCount} 条记录`)
+    }
+  } catch {
+    // 覆盖确认被取消或导入出错
+  }
 }
 </script>
 
@@ -134,7 +253,7 @@ function onAutoLockConfirm({ selectedOptions }: any) {
             title="自动锁定时间"
             :value="autoLockText"
             is-link
-            @click="showAutoLockPicker = true"
+            @click="openAutoLockPicker"
           />
           <van-cell
             v-if="isPasswordSet() || pwdEnabled"
@@ -154,19 +273,35 @@ function onAutoLockConfirm({ selectedOptions }: any) {
         <div class="section-label">数据管理</div>
         <van-cell-group inset>
           <van-cell title="分类管理" is-link @click="router.push({ name: 'categoryManage' })" />
-          <van-cell title="导出数据" is-link @click="$emit('export')" />
-          <van-cell title="导入数据" is-link @click="$emit('import')" />
+          <van-cell title="导出数据" is-link @click="handleExport" />
+          <van-cell title="导入数据" is-link @click="handleImport" />
         </van-cell-group>
+
+        <input
+          ref="fileInput"
+          type="file"
+          accept="application/json,.json"
+          style="display: none"
+          @change="onFileChange"
+        />
+        <van-action-sheet
+          v-model:show="showImportSheet"
+          :actions="importActions"
+          cancel-text="取消"
+          close-on-click-action
+          @select="onImportSelect"
+        />
 
         <div class="section-label">关于</div>
         <van-cell-group inset>
           <van-cell title="应用名称" value="LifeLog" />
-          <van-cell title="版本号" value="1.0.2" />
+          <van-cell title="版本号" value="1.0.3" />
           <van-cell title="隐私说明" label="所有数据仅存储在本地浏览器，不会上传至任何服务器" />
         </van-cell-group>
 
         <van-popup v-model:show="showAutoLockPicker" position="bottom" round>
           <van-picker
+            v-model="autoLockPickerValue"
             :columns="autoLockOptions"
             title="选择自动锁定时间"
             @confirm="onAutoLockConfirm"
@@ -174,55 +309,13 @@ function onAutoLockConfirm({ selectedOptions }: any) {
           />
         </van-popup>
 
-        <van-dialog
-          v-model:show="showCreatePwdDialog"
-          title="设置密码"
-          show-cancel-button
-          @confirm="handleCreatePwd"
-        >
-          <div class="dialog-body">
-            <van-field
-              v-model="newPwd"
-              type="password"
-              placeholder="请输入密码（至少4位）"
-              maxlength="20"
-            />
-            <van-field
-              v-model="confirmPwd"
-              type="password"
-              placeholder="请确认密码"
-              maxlength="20"
-            />
-          </div>
-        </van-dialog>
-
-        <van-dialog
-          v-model:show="showChangePwdDialog"
-          title="修改密码"
-          show-cancel-button
-          @confirm="handleChangePwd"
-        >
-          <div class="dialog-body">
-            <van-field
-              v-model="currentPwd"
-              type="password"
-              placeholder="请输入当前密码"
-              maxlength="20"
-            />
-            <van-field
-              v-model="changeNewPwd"
-              type="password"
-              placeholder="请输入新密码（至少4位）"
-              maxlength="20"
-            />
-            <van-field
-              v-model="changeConfirmPwd"
-              type="password"
-              placeholder="请确认新密码"
-              maxlength="20"
-            />
-          </div>
-        </van-dialog>
+        <PinInputPopup
+          v-model:show="showPinPopup"
+          :title="pinTitle"
+          :subtitle="pinSubtitle"
+          :error="pinError"
+          @complete="onPinComplete"
+        />
       </div>
   </div>
 </template>
@@ -259,10 +352,6 @@ function onAutoLockConfirm({ selectedOptions }: any) {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   padding: 8px 16px 6px;
-}
-
-.dialog-body {
-  padding: 12px 16px;
 }
 
 .danger-text {

@@ -35,8 +35,9 @@ const loadPlace = async () => {
 }
 
 const applyPickResult = async (val: { lat: number; lng: number; address: string } | null) => {
-  if (!val || !placeFormRef.value) return
+  if (!val) return
   await nextTick()
+  if (!placeFormRef.value) return
   const form = placeFormRef.value.form
   form.lat = val.lat
   form.lng = val.lng
@@ -48,6 +49,8 @@ watch(mapPickResult, applyPickResult)
 
 onMounted(async () => {
   await loadPlace()
+  // 应用无 keep-alive：返回本页会重新挂载并重新加载数据，表单渲染后再应用选点结果。
+  await applyPickResult(mapPickResult.value)
 })
 
 const onSubmit = async (data: PlaceFormData) => {

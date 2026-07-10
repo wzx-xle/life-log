@@ -34,6 +34,9 @@ export function useMap() {
     }
 
     amapLoadPromise = new Promise((resolve, reject) => {
+      // JSAPI 2.0：安全密钥必须在脚本加载前设置，否则 Geocoder/PlaceSearch/Geolocation 调用失败
+      ;(window as any)._AMapSecurityConfig = { securityJsCode: import.meta.env.VITE_AMAP_SECURITY_CODE }
+
       const script = document.createElement('script')
       script.src = AMAP_URL
       script.onload = () => resolve()

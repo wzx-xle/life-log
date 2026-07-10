@@ -33,6 +33,7 @@ const amount = ref('')
 interface UploadItem {
   url?: string
   file?: File
+  isImage?: boolean
   status?: '' | 'done' | 'uploading' | 'failed'
 }
 
@@ -102,6 +103,7 @@ const afterRead = async (items: UploadItem | UploadItem[]) => {
   if (!item.file) return
   try {
     item.url = await compressImage(item.file)
+    item.isImage = true
     item.status = 'done'
   } catch {
     item.status = 'failed'
@@ -176,7 +178,7 @@ const applyReviewData = (review?: Review) => {
   content.value = review.content || ''
   amount.value = review.amount?.toString() || ''
   if (review.photos) {
-    photoList.value = review.photos.map((url) => ({ url, status: 'done' as const }))
+    photoList.value = review.photos.map((url) => ({ url, isImage: true, status: 'done' as const }))
   }
   if (review.items) {
     consumptionItems.value = [...review.items]

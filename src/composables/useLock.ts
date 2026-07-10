@@ -82,7 +82,7 @@ export function useLock() {
     return true
   }
 
-  async function resetPassword() {
+  async function resetPassword(): Promise<boolean> {
     try {
       await showConfirmDialog({
         title: '重置密码',
@@ -91,7 +91,7 @@ export function useLock() {
         cancelButtonText: '取消',
       })
     } catch {
-      return
+      return false
     }
 
     localStorage.removeItem('pwd_hash')
@@ -111,6 +111,7 @@ export function useLock() {
     await db.reviews.clear()
 
     router.push({ name: 'settings' })
+    return true
   }
 
   function checkAutoLock(): boolean {

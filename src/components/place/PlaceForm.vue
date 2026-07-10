@@ -149,7 +149,7 @@ const removeTag = (index: number) => {
 }
 
 const fileList = ref<UploaderFileListItem[]>(
-  form.photos.map(url => ({ content: url, isImage: true, status: 'done' as const }))
+  form.photos.map(url => ({ url, isImage: true, status: 'done' as const }))
 )
 
 const compressPhoto = (file: File): Promise<string> => {
@@ -170,8 +170,8 @@ const compressPhoto = (file: File): Promise<string> => {
 
 const syncFormPhotos = () => {
   form.photos = fileList.value
-    .filter(x => x.content)
-    .map(x => x.content!) as string[]
+    .filter(x => x.url)
+    .map(x => x.url!) as string[]
 }
 
 const beforeRead = (file: File | File[]) => {
@@ -190,7 +190,7 @@ const afterRead = async (item: UploaderFileListItem | UploaderFileListItem[]) =>
     if (f.file) {
       try {
         const base64 = await compressPhoto(f.file)
-        fileList.value[idx] = { content: base64, isImage: true, status: 'done' as const }
+        fileList.value[idx] = { url: base64, isImage: true, status: 'done' as const }
       } catch {
         if (idx !== -1) fileList.value.splice(idx, 1)
         showToast('图片处理失败')

@@ -12,6 +12,7 @@ let geocoderInstance: any = null
 let centerMarker: any = null
 
 const AMAP_KEY = import.meta.env.VITE_AMAP_KEY
+const AMAP_SECURITY_CODE = import.meta.env.VITE_AMAP_SECURITY_CODE
 const AMAP_URL = `https://webapi.amap.com/maps?v=2.0&key=${AMAP_KEY}&plugin=AMap.Geocoder,AMap.Geolocation`
 
 let cleanupFns: (() => void)[] = []
@@ -70,6 +71,9 @@ const loadMap = () => {
     return
   }
 
+  // JSAPI 2.0：安全密钥必须在脚本加载前设置，否则 Geocoder/Geolocation 等 Web 服务调用失败
+  ;(window as any)._AMapSecurityConfig = { securityJsCode: AMAP_SECURITY_CODE }
+
   const script = document.createElement('script')
   script.src = AMAP_URL
   script.onload = initMap
@@ -98,6 +102,10 @@ const initMap = () => {
       if (status === 'complete' && result.position) {
         const { lng, lat } = result.position
         setCenter(lng, lat)
+      } else {
+        // 定位失败：对当前（默认）中心逆地理编码一次，避免地址栏停在“定位中...”
+        const center = mapInstance.getCenter()
+        reverseGeocode(center.getLng(), center.getLat())
       }
       loading.value = false
     })

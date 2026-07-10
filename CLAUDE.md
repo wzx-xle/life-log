@@ -22,7 +22,7 @@ npm run deploy       # 构建 + FTP上传到服务器
 - **Hash 路由** (`createWebHashHistory`)，URL 格式 `/#/reviews`
 - **路径别名** `@` → `src/`
 - **Dexie.js** 操作 IndexedDB，数据库 `LifeLogDB`，两个表 `places` / `reviews`
-- **高德地图 JSAPI 2.0** 动态脚本加载（不打包），仅用于店铺地址选点页面 (`MapPickerPage`)。Key 通过 `import.meta.env.VITE_AMAP_KEY` 注入
+- **高德地图 JSAPI 2.0** 动态脚本加载（不打包），仅用于店铺地址选点页面 (`MapPickerPage`)。Key 通过 `import.meta.env.VITE_AMAP_KEY` 注入。**逆地理编码/定位等 Web 服务插件要求安全密钥**：加载脚本前须设 `window._AMapSecurityConfig = { securityJsCode: import.meta.env.VITE_AMAP_SECURITY_CODE }`，否则地址解析静默失败（停在"定位中..."）
 
 ## CSS 体系
 
@@ -34,7 +34,7 @@ Vant 的默认样式也会被 PostCSS 转换，字号会自动适配。
 
 ## 环境变量
 
-- `.env.production`（gitignore）：`VITE_AMAP_KEY=你的Key`
+- `.env.production`（gitignore）：`VITE_AMAP_KEY=你的Key`、`VITE_AMAP_SECURITY_CODE=你的安全密钥`（JSAPI 2.0 逆地理/定位必需）
 - `.env.ftp`（gitignore）：FTP 部署凭证
 
 ## 数据层
