@@ -133,7 +133,9 @@ export function useLock() {
     lockUntil.value = 0
     saveErrorCount(0)
     saveLockUntil(0)
-    router.push(targetRoute)
+    // 用 replace 而非 push：解锁后用目标页替换掉历史中的锁屏页，避免残留导致
+    // 后续 router.back()（如地图选点“确认”）退回锁屏页而陷入锁屏循环
+    router.replace(targetRoute)
   }
 
   return {
