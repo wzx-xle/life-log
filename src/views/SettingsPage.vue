@@ -295,7 +295,7 @@ async function onImportSelect(_action: { name: string }, index: number) {
         <div class="section-label">关于</div>
         <van-cell-group inset>
           <van-cell title="应用名称" value="LifeLog" />
-          <van-cell title="版本号" value="1.0.3" />
+          <van-cell title="版本号" value="1.0.4" />
           <van-cell title="隐私说明" label="所有数据仅存储在本地浏览器，不会上传至任何服务器" />
         </van-cell-group>
 

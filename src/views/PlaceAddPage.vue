@@ -30,7 +30,7 @@ const prefillQuery = computed(() => {
 
 const placeFormRef = ref<InstanceType<typeof PlaceForm>>()
 
-const applyPickResult = async (val: { lat: number; lng: number; address: string } | null) => {
+const applyPickResult = async (val: { lat: number; lng: number; address: string; name: string } | null) => {
   if (!val) return
   await nextTick()
   if (!placeFormRef.value) return
@@ -38,6 +38,8 @@ const applyPickResult = async (val: { lat: number; lng: number; address: string 
   form.lat = val.lat
   form.lng = val.lng
   form.address = val.address || ''
+  // 名称仅在选中具体 POI（name 非空）时覆盖；选"当前位置"/取消不动已填名称
+  if (val.name) form.name = val.name
   mapPickResult.value = null
 }
 

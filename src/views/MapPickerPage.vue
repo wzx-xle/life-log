@@ -40,9 +40,10 @@ const selectedPoi = ref<PoiItem | null>(null)
 const selectedResult = computed(() => {
   if (mode.value === 'poi' && selectedPoi.value) {
     const p = selectedPoi.value
-    return { lat: p.lat, lng: p.lng, address: p.address || p.name }
+    return { lat: p.lat, lng: p.lng, address: p.address || p.name, name: p.name }
   }
-  return { lat: centerLat.value, lng: centerLng.value, address: centerAddress.value }
+  // 中心模式（当前位置）无 POI 名称，name 置空——回填端以空判定跳过覆盖店铺名称
+  return { lat: centerLat.value, lng: centerLng.value, address: centerAddress.value, name: '' }
 })
 
 // 按 POI 唯一 id 判定选中：同一建筑内多个 POI 常共享坐标，用坐标会误选多个

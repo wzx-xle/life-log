@@ -249,6 +249,19 @@ defineExpose({ form })
 
 <template>
   <div class="place-form">
+    <div class="map-pick-entry">
+      <van-button
+        round
+        block
+        plain
+        type="primary"
+        icon="location-o"
+        @click="handlePickLocation"
+      >
+        从地图选择店铺
+      </van-button>
+    </div>
+
     <van-cell-group inset>
       <van-field
         v-model="form.name"
@@ -283,11 +296,7 @@ defineExpose({ form })
         label="地址"
         placeholder="请输入店铺地址"
         required
-      >
-        <template #button>
-          <span class="pick-location-btn" @click="handlePickLocation">地图选点</span>
-        </template>
-      </van-field>
+      />
 
       <van-field
         v-model="form.phone"
@@ -469,10 +478,8 @@ defineExpose({ form })
   cursor: pointer;
 }
 
-.pick-location-btn {
-  font-size: var(--font-size-sm);
-  color: var(--color-primary);
-  white-space: nowrap;
+.map-pick-entry {
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
 }
 
 .form-actions {

@@ -17,7 +17,7 @@ export function useExport() {
     }))
 
     return {
-      version: '1.0.3',
+      version: '1.0.4',
       exportDate: new Date().toISOString(),
       places,
       reviews: reviewsWithPlaceName,
