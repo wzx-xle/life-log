@@ -6,6 +6,7 @@ import type { UploaderFileListItem } from 'vant'
 import Compressor from 'compressorjs'
 import { showToast } from 'vant'
 import { useDatabase } from '@/composables/useDatabase'
+import { placeFormDraft } from '@/composables/mapPickState'
 
 export interface PlaceFormData {
   name: string
@@ -108,6 +109,13 @@ function openNewCatPopup() {
 }
 
 onMounted(async () => {
+  // 从地图选点返回：先同步恢复草稿——须早于父页面 applyPickResult（其 await nextTick），
+  // 否则草稿的旧地址会覆盖刚选中的新地址。地址随后由父页面用 mapPickResult 覆盖。
+  if (placeFormDraft.value) {
+    Object.assign(form, placeFormDraft.value)
+    fileList.value = form.photos.map((url) => ({ url, isImage: true, status: 'done' as const }))
+    placeFormDraft.value = null
+  }
   await refreshCategories()
 })
 
@@ -227,6 +235,12 @@ const handleSubmit = () => {
 }
 
 const handlePickLocation = () => {
+  // 进入地图选点前暂存表单，返回重挂时恢复（tags/photos 深拷贝，避免响应式引用）
+  placeFormDraft.value = {
+    ...form,
+    tags: [...form.tags],
+    photos: [...form.photos],
+  }
   emit('pickLocation')
 }
 
