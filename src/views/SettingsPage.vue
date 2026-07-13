@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onActivated } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast, showConfirmDialog } from 'vant'
 import { useLock } from '@/composables/useLock'
 import { useExport } from '@/utils/exportData'
 import { useImport } from '@/utils/importData'
+import { useWebdavSync } from '@/composables/useWebdavSync'
 import PinInputPopup from '@/components/lock/PinInputPopup.vue'
 
 const router = useRouter()
@@ -12,6 +13,22 @@ const router = useRouter()
 const { createPassword, changePassword, resetPassword, isPasswordSet } = useLock()
 const { downloadExport } = useExport()
 const { validateFormat, importMerge, importOverwrite } = useImport()
+const { getLastSync } = useWebdavSync()
+
+// WebDAV 入口右侧摘要：上次同步日期或未同步（返回本页时刷新）
+const syncSummary = ref('未同步')
+const refreshSyncSummary = () => {
+  const s = getLastSync()
+  if (!s) {
+    syncSummary.value = '未同步'
+    return
+  }
+  const d = new Date(s.time)
+  const md = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  syncSummary.value = `${s.action === 'upload' ? '上传' : '恢复'} ${md}`
+}
+onMounted(refreshSyncSummary)
+onActivated(refreshSyncSummary)
 
 const pwdEnabled = ref(localStorage.getItem('pwd_enabled') === 'true')
 const autoLockMinutes = ref(Number(localStorage.getItem('auto_lock_minutes') || '5'))
@@ -275,6 +292,7 @@ async function onImportSelect(_action: { name: string }, index: number) {
           <van-cell title="分类管理" is-link @click="router.push({ name: 'categoryManage' })" />
           <van-cell title="导出数据" is-link @click="handleExport" />
           <van-cell title="导入数据" is-link @click="handleImport" />
+          <van-cell title="WebDAV 同步" :value="syncSummary" is-link @click="router.push({ name: 'settingsSync' })" />
         </van-cell-group>
 
         <input
@@ -295,8 +313,8 @@ async function onImportSelect(_action: { name: string }, index: number) {
         <div class="section-label">关于</div>
         <van-cell-group inset>
           <van-cell title="应用名称" value="LifeLog" />
-          <van-cell title="版本号" value="1.0.4" />
-          <van-cell title="隐私说明" label="所有数据仅存储在本地浏览器，不会上传至任何服务器" />
+          <van-cell title="版本号" value="1.0.5" />
+          <van-cell title="隐私说明" label="默认仅存储在本地浏览器；开启 WebDAV 同步后会上传到你配置的服务" />
         </van-cell-group>
 
         <van-popup v-model:show="showAutoLockPicker" position="bottom" round>

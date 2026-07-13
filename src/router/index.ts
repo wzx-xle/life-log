@@ -66,6 +66,11 @@ const routes = [
     name: 'categoryManage',
     component: () => import('@/views/CategoryManagePage.vue'),
   },
+  {
+    path: '/settings/sync',
+    name: 'settingsSync',
+    component: () => import('@/views/SettingsSyncPage.vue'),
+  },
 ]
 
 const router = createRouter({
